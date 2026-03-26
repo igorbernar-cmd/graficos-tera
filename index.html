@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gráfico Interativo - Janeiro, Fevereiro e Março</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --grid: #e8edf5;
+      --blue: #2563eb;
+      --orange: #ea580c;
+      --green: #16a34a;
+      --purple: #7c3aed;
+      --amber: #d97706;
+      --danger: #dc2626;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+      color: var(--text);
+    }
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 30px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      max-width: 980px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.08);
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .toolbar.card, .chart-card {
+      background: var(--card);
+      border: 1px solid rgba(226,232,240,0.88);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .toolbar {
+      padding: 16px 18px 18px;
+      margin-bottom: 16px;
+    }
+    .toolbar-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1.2fr 1.25fr auto;
+      gap: 16px;
+      align-items: start;
+    }
+    .control-group {
+      min-width: 0;
+    }
+    .control-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+    .segmented, .toggle-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .seg-btn {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #334155;
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s ease;
+      user-select: none;
+    }
+    .seg-btn:hover { transform: translateY(-1px); border-color: #bfdbfe; }
+    .seg-btn.active {
+      background: #dbeafe;
+      border-color: #93c5fd;
+      color: #1d4ed8;
+      box-shadow: inset 0 0 0 1px rgba(37,99,235,.05);
+    }
+    .check-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      user-select: none;
+      transition: all .18s ease;
+    }
+    .check-chip input { display: none; }
+    .check-chip.active {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,.04);
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+    .flag-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex: 0 0 auto;
+    }
+    .toolbar-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-self: end;
+    }
+    .ghost-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #334155;
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .ghost-btn:hover { background: #f8fafc; }
+    .status-note {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border-left: 4px solid var(--blue);
+      background: #f8fbff;
+      color: #1e3a8a;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+    .chart-card {
+      padding: 18px 18px 16px;
+    }
+    .chart-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .chart-title {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+    .chart-meta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      max-width: 560px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #334155;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+    }
+    .chart-wrap {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      overflow: hidden;
+      min-height: 690px;
+    }
+    #chartSvg {
+      display: block;
+      width: 100%;
+      height: 690px;
+    }
+    .tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(15, 23, 42, 0.94);
+      color: white;
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22);
+      min-width: 170px;
+      font-size: 13px;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translate(-50%, -110%);
+      transition: opacity .12s ease;
+      z-index: 5;
+    }
+    .tooltip.visible { opacity: 1; }
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 16px;
+      background: rgba(255,255,255,.92);
+    }
+    .empty-state.visible { display: flex; }
+    .footer-note {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    @media (max-width: 1180px) {
+      .toolbar-grid { grid-template-columns: 1fr 1fr; }
+      .toolbar-actions { flex-direction: row; align-self: start; }
+      .chart-top { flex-direction: column; }
+      .legend { justify-content: flex-start; max-width: none; }
+    }
+    @media (max-width: 760px) {
+      .page { padding: 14px; }
+      .header { flex-direction: column; }
+      .toolbar-grid { grid-template-columns: 1fr; }
+      .chart-wrap, #chartSvg { min-height: 600px; height: 600px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <h1>Gráfico interativo de linha</h1>
+        <div class="subtitle">
+          Agora com <strong>Janeiro, Fevereiro e Março</strong>, filtros na horizontal, seleção de métricas, seleção livre de canais e controle individual das flags de eventos.
+        </div>
+      </div>
+      <div class="pill">Arquivos usados: Janeiro.csv, Fevereiro.csv e Dados.csv</div>
+    </div>
+
+    <div class="toolbar card">
+      <div class="toolbar-grid">
+        <div class="control-group">
+          <div class="control-title">Período</div>
+          <div class="segmented" id="periodControls"></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Métrica</div>
+          <div class="segmented" id="metricControls"></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Canais</div>
+          <div class="toggle-list" id="channelControls"></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-title">Flags de eventos</div>
+          <div class="toggle-list" id="flagControls"></div>
+        </div>
+
+        <div class="toolbar-actions">
+          <button class="ghost-btn" id="selectAllChannelsBtn">Todos canais</button>
+          <button class="ghost-btn" id="clearChannelsBtn">Limpar canais</button>
+          <button class="ghost-btn" id="allFlagsBtn">Todas flags</button>
+          <button class="ghost-btn" id="clearFlagsBtn">Ocultar flags</button>
+        </div>
+      </div>
+
+      <div class="status-note" id="statusNote">
+        Selecione período, métrica, canais e flags para atualizar o gráfico.
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-top">
+        <div>
+          <h2 class="chart-title" id="chartTitle">Leads - 3 meses</h2>
+          <div class="chart-meta" id="chartMeta">Comparativo diário por canal no período selecionado.</div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="chart-wrap">
+        <svg id="chartSvg" viewBox="0 0 1280 690" preserveAspectRatio="none" aria-label="Gráfico de linha interativo"></svg>
+        <div class="empty-state" id="emptyState"></div>
+        <div class="tooltip" id="tooltip"></div>
+      </div>
+
+      <div class="footer-note">
+        Eventos de março disponíveis como flags individuais: <strong>09/03</strong> (Mudança da home page do site), <strong>11/03 a 19/03</strong> (Inserção de 20 CTA's posts mais acessados) e <strong>19/03</strong> (Mudança dos 3 banners fixos - blog e site).
+      </div>
+    </div>
+  </div>
+
+<script>
+const rawData = [{"periodo": "Janeiro", "monthNum": 1, "dia": 1, "dataLabel": "01/01", "sortKey": "2026-01-01", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 68, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 372, "leads": 1, "taxa": 0.27}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 2, "dataLabel": "02/01", "sortKey": "2026-01-02", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 237, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1102, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 3, "dataLabel": "03/01", "sortKey": "2026-01-03", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 357, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 811, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 4, "dataLabel": "04/01", "sortKey": "2026-01-04", "channels": {"No Value": {"leads": 30}, "Blog": {"trafego": 629, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1294, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 5, "dataLabel": "05/01", "sortKey": "2026-01-05", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 491, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 2215, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 6, "dataLabel": "06/01", "sortKey": "2026-01-06", "channels": {"No Value": {"leads": 67}, "Blog": {"trafego": 430, "leads": 1, "taxa": 0.23}, "Site": {"trafego": 3113, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 16, "leads": 2, "taxa": 12.5}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 7, "dataLabel": "07/01", "sortKey": "2026-01-07", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 541, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3422, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 8, "dataLabel": "08/01", "sortKey": "2026-01-08", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 653, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3630, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 9, "dataLabel": "09/01", "sortKey": "2026-01-09", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 496, "leads": 1, "taxa": 0.2}, "Site": {"trafego": 2965, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 10, "dataLabel": "10/01", "sortKey": "2026-01-10", "channels": {"No Value": {"leads": 15}, "Blog": {"trafego": 171, "leads": 1, "taxa": 0.58}, "Site": {"trafego": 1307, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 11, "dataLabel": "11/01", "sortKey": "2026-01-11", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 498, "leads": 4, "taxa": 0.8}, "Site": {"trafego": 1504, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 2, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 12, "dataLabel": "12/01", "sortKey": "2026-01-12", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 171, "leads": 6, "taxa": 3.51}, "Site": {"trafego": 2643, "leads": 1, "taxa": 0.04}, "ChatGPT": {"trafego": 10, "leads": 1, "taxa": 10.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 13, "dataLabel": "13/01", "sortKey": "2026-01-13", "channels": {"No Value": {"leads": 60}, "Blog": {"trafego": 190, "leads": 1, "taxa": 0.53}, "Site": {"trafego": 3328, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 20, "leads": 2, "taxa": 10.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 14, "dataLabel": "14/01", "sortKey": "2026-01-14", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 524, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 3279, "leads": 6, "taxa": 0.18}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 15, "dataLabel": "15/01", "sortKey": "2026-01-15", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 523, "leads": 2, "taxa": 0.38}, "Site": {"trafego": 3700, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 16, "dataLabel": "16/01", "sortKey": "2026-01-16", "channels": {"No Value": {"leads": 42}, "Blog": {"trafego": 436, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 2787, "leads": 1, "taxa": 0.04}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 17, "dataLabel": "17/01", "sortKey": "2026-01-17", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 673, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 2121, "leads": 1, "taxa": 0.05}, "ChatGPT": {"trafego": 3, "leads": 1, "taxa": 33.33}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 18, "dataLabel": "18/01", "sortKey": "2026-01-18", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 742, "leads": 1, "taxa": 0.13}, "Site": {"trafego": 1735, "leads": 2, "taxa": 0.12}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 19, "dataLabel": "19/01", "sortKey": "2026-01-19", "channels": {"No Value": {"leads": 188}, "Blog": {"trafego": 835, "leads": 2, "taxa": 0.24}, "Site": {"trafego": 4659, "leads": 4, "taxa": 0.09}, "ChatGPT": {"trafego": 16, "leads": 1, "taxa": 6.25}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 20, "dataLabel": "20/01", "sortKey": "2026-01-20", "channels": {"No Value": {"leads": 71}, "Blog": {"trafego": 544, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 6283, "leads": 9, "taxa": 0.14}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 21, "dataLabel": "21/01", "sortKey": "2026-01-21", "channels": {"No Value": {"leads": 85}, "Blog": {"trafego": 642, "leads": 2, "taxa": 0.31}, "Site": {"trafego": 5762, "leads": 18, "taxa": 0.31}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 22, "dataLabel": "22/01", "sortKey": "2026-01-22", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 754, "leads": 2, "taxa": 0.27}, "Site": {"trafego": 5192, "leads": 21, "taxa": 0.4}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 23, "dataLabel": "23/01", "sortKey": "2026-01-23", "channels": {"No Value": {"leads": 111}, "Blog": {"trafego": 850, "leads": 1, "taxa": 0.12}, "Site": {"trafego": 5772, "leads": 7, "taxa": 0.12}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 24, "dataLabel": "24/01", "sortKey": "2026-01-24", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 398, "leads": 2, "taxa": 0.5}, "Site": {"trafego": 3415, "leads": 6, "taxa": 0.18}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 25, "dataLabel": "25/01", "sortKey": "2026-01-25", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 323, "leads": 2, "taxa": 0.62}, "Site": {"trafego": 3889, "leads": 11, "taxa": 0.28}, "ChatGPT": {"trafego": 7, "leads": 1, "taxa": 14.29}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 26, "dataLabel": "26/01", "sortKey": "2026-01-26", "channels": {"No Value": {"leads": 138}, "Blog": {"trafego": 546, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 8867, "leads": 17, "taxa": 0.19}, "ChatGPT": {"trafego": 20, "leads": 1, "taxa": 5.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 27, "dataLabel": "27/01", "sortKey": "2026-01-27", "channels": {"No Value": {"leads": 115}, "Blog": {"trafego": 521, "leads": 4, "taxa": 0.77}, "Site": {"trafego": 9038, "leads": 22, "taxa": 0.24}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 28, "dataLabel": "28/01", "sortKey": "2026-01-28", "channels": {"No Value": {"leads": 93}, "Blog": {"trafego": 582, "leads": 2, "taxa": 0.34}, "Site": {"trafego": 7888, "leads": 19, "taxa": 0.24}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 29, "dataLabel": "29/01", "sortKey": "2026-01-29", "channels": {"No Value": {"leads": 540}, "Blog": {"trafego": 530, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 8964, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 30, "dataLabel": "30/01", "sortKey": "2026-01-30", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 540, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 9853, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 31, "dataLabel": "31/01", "sortKey": "2026-01-31", "channels": {"No Value": {"leads": 6}, "Blog": {"trafego": 261, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 7032, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 1, "dataLabel": "01/02", "sortKey": "2026-02-01", "channels": {"No Value": {"leads": 22}, "Blog": {"trafego": 261, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 9674, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 2, "dataLabel": "02/02", "sortKey": "2026-02-02", "channels": {"No Value": {"leads": 50}, "Blog": {"trafego": 475, "leads": 1, "taxa": 0.21}, "Site": {"trafego": 9212, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 13, "leads": 2, "taxa": 15.38}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 3, "dataLabel": "03/02", "sortKey": "2026-02-03", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 541, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5804, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 4, "dataLabel": "04/02", "sortKey": "2026-02-04", "channels": {"No Value": {"leads": 54}, "Blog": {"trafego": 547, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 5105, "leads": 3, "taxa": 0.06}, "ChatGPT": {"trafego": 9, "leads": 1, "taxa": 11.11}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 5, "dataLabel": "05/02", "sortKey": "2026-02-05", "channels": {"No Value": {"leads": 62}, "Blog": {"trafego": 582, "leads": 2, "taxa": 0.34}, "Site": {"trafego": 7014, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 25, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 6, "dataLabel": "06/02", "sortKey": "2026-02-06", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 513, "leads": 2, "taxa": 0.39}, "Site": {"trafego": 6009, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 8, "leads": 2, "taxa": 25.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 7, "dataLabel": "07/02", "sortKey": "2026-02-07", "channels": {"No Value": {"leads": 28}, "Blog": {"trafego": 222, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3063, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 8, "dataLabel": "08/02", "sortKey": "2026-02-08", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 227, "leads": 3, "taxa": 1.32}, "Site": {"trafego": 2881, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 9, "dataLabel": "09/02", "sortKey": "2026-02-09", "channels": {"No Value": {"leads": 74}, "Blog": {"trafego": 596, "leads": 5, "taxa": 0.84}, "Site": {"trafego": 8298, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 12, "leads": 1, "taxa": 8.33}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 10, "dataLabel": "10/02", "sortKey": "2026-02-10", "channels": {"No Value": {"leads": 92}, "Blog": {"trafego": 607, "leads": 6, "taxa": 0.99}, "Site": {"trafego": 8573, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 21, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 11, "dataLabel": "11/02", "sortKey": "2026-02-11", "channels": {"No Value": {"leads": 81}, "Blog": {"trafego": 580, "leads": 4, "taxa": 0.69}, "Site": {"trafego": 9485, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 6, "leads": 1, "taxa": 16.67}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 12, "dataLabel": "12/02", "sortKey": "2026-02-12", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 577, "leads": 8, "taxa": 1.39}, "Site": {"trafego": 7999, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 13, "dataLabel": "13/02", "sortKey": "2026-02-13", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 503, "leads": 2, "taxa": 0.4}, "Site": {"trafego": 5326, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 14, "dataLabel": "14/02", "sortKey": "2026-02-14", "channels": {"No Value": {"leads": 19}, "Blog": {"trafego": 165, "leads": 2, "taxa": 1.21}, "Site": {"trafego": 2772, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 1, "taxa": 25.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 15, "dataLabel": "15/02", "sortKey": "2026-02-15", "channels": {"No Value": {"leads": 25}, "Blog": {"trafego": 140, "leads": 5, "taxa": 3.57}, "Site": {"trafego": 3172, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 2, "taxa": 18.18}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 16, "dataLabel": "16/02", "sortKey": "2026-02-16", "channels": {"No Value": {"leads": 37}, "Blog": {"trafego": 211, "leads": 7, "taxa": 3.32}, "Site": {"trafego": 4534, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 17, "dataLabel": "17/02", "sortKey": "2026-02-17", "channels": {"No Value": {"leads": 38}, "Blog": {"trafego": 230, "leads": 12, "taxa": 5.22}, "Site": {"trafego": 4256, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 18, "dataLabel": "18/02", "sortKey": "2026-02-18", "channels": {"No Value": {"leads": 62}, "Blog": {"trafego": 482, "leads": 15, "taxa": 3.02}, "Site": {"trafego": 6414, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 3, "taxa": 20.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 19, "dataLabel": "19/02", "sortKey": "2026-02-19", "channels": {"No Value": {"leads": 135}, "Blog": {"trafego": 612, "leads": 5, "taxa": 0.81}, "Site": {"trafego": 8547, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 20, "dataLabel": "20/02", "sortKey": "2026-02-20", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 626, "leads": 3, "taxa": 0.48}, "Site": {"trafego": 7107, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 21, "dataLabel": "21/02", "sortKey": "2026-02-21", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 317, "leads": 3, "taxa": 0.94}, "Site": {"trafego": 3272, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 22, "dataLabel": "22/02", "sortKey": "2026-02-22", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 281, "leads": 12, "taxa": 4.1}, "Site": {"trafego": 3176, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 23, "dataLabel": "23/02", "sortKey": "2026-02-23", "channels": {"No Value": {"leads": 174}, "Blog": {"trafego": 795, "leads": 5, "taxa": 0.63}, "Site": {"trafego": 7691, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 24, "dataLabel": "24/02", "sortKey": "2026-02-24", "channels": {"No Value": {"leads": 65}, "Blog": {"trafego": 783, "leads": 9, "taxa": 1.14}, "Site": {"trafego": 6664, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 1, "taxa": 20.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 25, "dataLabel": "25/02", "sortKey": "2026-02-25", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 681, "leads": 3, "taxa": 0.44}, "Site": {"trafego": 6086, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 6, "leads": 2, "taxa": 33.33}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 26, "dataLabel": "26/02", "sortKey": "2026-02-26", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 747, "leads": 1, "taxa": 0.13}, "Site": {"trafego": 5842, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 27, "dataLabel": "27/02", "sortKey": "2026-02-27", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 483, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4923, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 28, "dataLabel": "28/02", "sortKey": "2026-02-28", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 262, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1805, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 1, "dataLabel": "01/03", "sortKey": "2026-03-01", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 68, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 372, "leads": 1, "taxa": 0.27}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 2, "dataLabel": "02/03", "sortKey": "2026-03-02", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 237, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1102, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 3, "dataLabel": "03/03", "sortKey": "2026-03-03", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 357, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 811, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 4, "dataLabel": "04/03", "sortKey": "2026-03-04", "channels": {"No Value": {"leads": 30}, "Blog": {"trafego": 629, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1294, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 5, "dataLabel": "05/03", "sortKey": "2026-03-05", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 491, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 2215, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 6, "dataLabel": "06/03", "sortKey": "2026-03-06", "channels": {"No Value": {"leads": 67}, "Blog": {"trafego": 430, "leads": 1, "taxa": 0.23}, "Site": {"trafego": 3113, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 16, "leads": 2, "taxa": 12.5}}}, {"periodo": "Março", "monthNum": 3, "dia": 7, "dataLabel": "07/03", "sortKey": "2026-03-07", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 541, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3422, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 8, "dataLabel": "08/03", "sortKey": "2026-03-08", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 653, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3630, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Março", "monthNum": 3, "dia": 9, "dataLabel": "09/03", "sortKey": "2026-03-09", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 496, "leads": 1, "taxa": 0.2}, "Site": {"trafego": 2965, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 10, "dataLabel": "10/03", "sortKey": "2026-03-10", "channels": {"No Value": {"leads": 15}, "Blog": {"trafego": 171, "leads": 1, "taxa": 0.58}, "Site": {"trafego": 1307, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 11, "dataLabel": "11/03", "sortKey": "2026-03-11", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 498, "leads": 4, "taxa": 0.8}, "Site": {"trafego": 1504, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 2, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 12, "dataLabel": "12/03", "sortKey": "2026-03-12", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 171, "leads": 6, "taxa": 3.51}, "Site": {"trafego": 2643, "leads": 1, "taxa": 0.04}, "ChatGPT": {"trafego": 10, "leads": 1, "taxa": 10.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 13, "dataLabel": "13/03", "sortKey": "2026-03-13", "channels": {"No Value": {"leads": 60}, "Blog": {"trafego": 190, "leads": 1, "taxa": 0.53}, "Site": {"trafego": 3328, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 20, "leads": 2, "taxa": 10.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 14, "dataLabel": "14/03", "sortKey": "2026-03-14", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 524, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 3279, "leads": 6, "taxa": 0.18}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Março", "monthNum": 3, "dia": 15, "dataLabel": "15/03", "sortKey": "2026-03-15", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 523, "leads": 2, "taxa": 0.38}, "Site": {"trafego": 3700, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 16, "dataLabel": "16/03", "sortKey": "2026-03-16", "channels": {"No Value": {"leads": 42}, "Blog": {"trafego": 436, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 2787, "leads": 1, "taxa": 0.04}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 17, "dataLabel": "17/03", "sortKey": "2026-03-17", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 673, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 2121, "leads": 1, "taxa": 0.05}, "ChatGPT": {"trafego": 3, "leads": 1, "taxa": 33.33}}}, {"periodo": "Março", "monthNum": 3, "dia": 18, "dataLabel": "18/03", "sortKey": "2026-03-18", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 742, "leads": 1, "taxa": 0.13}, "Site": {"trafego": 1735, "leads": 2, "taxa": 0.12}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 19, "dataLabel": "19/03", "sortKey": "2026-03-19", "channels": {"No Value": {"leads": 188}, "Blog": {"trafego": 835, "leads": 2, "taxa": 0.24}, "Site": {"trafego": 4659, "leads": 4, "taxa": 0.09}, "ChatGPT": {"trafego": 16, "leads": 1, "taxa": 6.25}}}, {"periodo": "Março", "monthNum": 3, "dia": 20, "dataLabel": "20/03", "sortKey": "2026-03-20", "channels": {"No Value": {"leads": 71}, "Blog": {"trafego": 544, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 6283, "leads": 9, "taxa": 0.14}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 21, "dataLabel": "21/03", "sortKey": "2026-03-21", "channels": {"No Value": {"leads": 85}, "Blog": {"trafego": 642, "leads": 2, "taxa": 0.31}, "Site": {"trafego": 5762, "leads": 18, "taxa": 0.31}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 22, "dataLabel": "22/03", "sortKey": "2026-03-22", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 754, "leads": 2, "taxa": 0.27}, "Site": {"trafego": 5192, "leads": 21, "taxa": 0.4}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 23, "dataLabel": "23/03", "sortKey": "2026-03-23", "channels": {"No Value": {"leads": 111}, "Blog": {"trafego": 850, "leads": 1, "taxa": 0.12}, "Site": {"trafego": 5772, "leads": 7, "taxa": 0.12}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 24, "dataLabel": "24/03", "sortKey": "2026-03-24", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 398, "leads": 2, "taxa": 0.5}, "Site": {"trafego": 3415, "leads": 6, "taxa": 0.18}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 25, "dataLabel": "25/03", "sortKey": "2026-03-25", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 323, "leads": 2, "taxa": 0.62}, "Site": {"trafego": 3889, "leads": 11, "taxa": 0.28}, "ChatGPT": {"trafego": 7, "leads": 1, "taxa": 14.29}}}, {"periodo": "Março", "monthNum": 3, "dia": 26, "dataLabel": "26/03", "sortKey": "2026-03-26", "channels": {"No Value": {"leads": 138}, "Blog": {"trafego": 546, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 8867, "leads": 17, "taxa": 0.19}, "ChatGPT": {"trafego": 20, "leads": 1, "taxa": 5.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 27, "dataLabel": "27/03", "sortKey": "2026-03-27", "channels": {"No Value": {"leads": 115}, "Blog": {"trafego": 521, "leads": 4, "taxa": 0.77}, "Site": {"trafego": 9038, "leads": 22, "taxa": 0.24}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Março", "monthNum": 3, "dia": 28, "dataLabel": "28/03", "sortKey": "2026-03-28", "channels": {"No Value": {"leads": 93}, "Blog": {"trafego": 582, "leads": 2, "taxa": 0.34}, "Site": {"trafego": 7888, "leads": 19, "taxa": 0.24}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 29, "dataLabel": "29/03", "sortKey": "2026-03-29", "channels": {"No Value": {"leads": 540}, "Blog": {"trafego": 530, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 8964, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 30, "dataLabel": "30/03", "sortKey": "2026-03-30", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 540, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 9853, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 31, "dataLabel": "31/03", "sortKey": "2026-03-31", "channels": {"No Value": {"leads": 6}, "Blog": {"trafego": 261, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 7032, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}];
+const periods = [
+  { key: "3 meses", label: "3 meses" },
+  { key: "Janeiro", label: "Janeiro" },
+  { key: "Fevereiro", label: "Fevereiro" },
+  { key: "Março", label: "Março" }
+];
+const metrics = [
+  { key: "leads", label: "Leads" },
+  { key: "trafego", label: "Tráfego" },
+  { key: "taxa", label: "Tx de conversão" }
+];
+const channels = [
+  { key: "No Value", label: "No Value", color: "#2563eb" },
+  { key: "Blog", label: "Blog", color: "#ea580c" },
+  { key: "Site", label: "Site", color: "#16a34a" },
+  { key: "ChatGPT", label: "ChatGPT", color: "#7c3aed" }
+];
+const annotations = [
+  {
+    key: "home",
+    type: "line",
+    dateKey: "2026-03-09",
+    shortLabel: "09/03 - Home page",
+    label: "Mudança da home page do site",
+    color: "#2563eb",
+    fill: "#eff6ff",
+    text: "#1d4ed8"
+  },
+  {
+    key: "cta",
+    type: "range",
+    startKey: "2026-03-11",
+    endKey: "2026-03-19",
+    shortLabel: "11/03-19/03 - CTA's",
+    label: "Inserção de 20 CTA's posts mais acessados",
+    color: "#d97706",
+    fill: "#fffbeb",
+    text: "#92400e"
+  },
+  {
+    key: "banners",
+    type: "line",
+    dateKey: "2026-03-19",
+    shortLabel: "19/03 - Banners fixos",
+    label: "Mudança dos 3 banners fixos (blog e site)",
+    color: "#dc2626",
+    fill: "#fef2f2",
+    text: "#b91c1c"
+  }
+];
+
+const state = {
+  period: "3 meses",
+  metric: "leads",
+  channels: new Set(channels.map(c => c.key)),
+  flags: new Set(annotations.map(a => a.key))
+};
+
+const els = {
+  periodControls: document.getElementById("periodControls"),
+  metricControls: document.getElementById("metricControls"),
+  channelControls: document.getElementById("channelControls"),
+  flagControls: document.getElementById("flagControls"),
+  selectAllChannelsBtn: document.getElementById("selectAllChannelsBtn"),
+  clearChannelsBtn: document.getElementById("clearChannelsBtn"),
+  allFlagsBtn: document.getElementById("allFlagsBtn"),
+  clearFlagsBtn: document.getElementById("clearFlagsBtn"),
+  statusNote: document.getElementById("statusNote"),
+  chartTitle: document.getElementById("chartTitle"),
+  chartMeta: document.getElementById("chartMeta"),
+  legend: document.getElementById("legend"),
+  chartSvg: document.getElementById("chartSvg"),
+  tooltip: document.getElementById("tooltip"),
+  emptyState: document.getElementById("emptyState")
+};
+
+const ns = "http://www.w3.org/2000/svg";
+function byPeriod(period) {
+  const data = period === "3 meses" ? rawData.slice() : rawData.filter(d => d.periodo === period);
+  return data.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+}
+
+function metricLabel(key) {
+  return metrics.find(m => m.key === key)?.label || key;
+}
+
+function append(tag, attrs = {}, parent = els.chartSvg) {
+  const el = document.createElementNS(ns, tag);
+  Object.entries(attrs).forEach(([k, v]) => {
+    if (v !== null && v !== undefined) el.setAttribute(k, String(v));
+  });
+  parent.appendChild(el);
+  return el;
+}
+
+function wrapText(text, maxChars) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach(word => {
+    const next = line ? line + " " + word : word;
+    if (next.length > maxChars && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(value);
+}
+
+function formatMetricValue(metric, value) {
+  if (value == null || Number.isNaN(value)) return "sem dado";
+  if (metric === "taxa") return value.toFixed(2).replace(".", ",") + "%";
+  return formatNumber(value);
+}
+
+function setStatus(html, tone = "info") {
+  els.statusNote.innerHTML = html;
+  els.statusNote.style.borderLeftColor = tone === "warn" ? "#d97706" : tone === "danger" ? "#dc2626" : "#2563eb";
+  els.statusNote.style.background = tone === "warn" ? "#fff7ed" : tone === "danger" ? "#fef2f2" : "#f8fbff";
+  els.statusNote.style.color = tone === "warn" ? "#9a3412" : tone === "danger" ? "#991b1b" : "#1e3a8a";
+}
+
+function buildControls() {
+  periods.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "seg-btn";
+    btn.textContent = item.label;
+    btn.addEventListener("click", () => {
+      state.period = item.key;
+      refresh();
+    });
+    els.periodControls.appendChild(btn);
+  });
+
+  metrics.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "seg-btn";
+    btn.textContent = item.label;
+    btn.addEventListener("click", () => {
+      state.metric = item.key;
+      refresh();
+    });
+    els.metricControls.appendChild(btn);
+  });
+
+  channels.forEach(ch => {
+    const label = document.createElement("label");
+    label.className = "check-chip";
+    label.innerHTML = `<input type="checkbox" checked><span class="dot" style="background:${ch.color}"></span><span>${ch.label}</span>`;
+    label.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (state.channels.has(ch.key)) state.channels.delete(ch.key);
+      else state.channels.add(ch.key);
+      refresh();
+    });
+    els.channelControls.appendChild(label);
+  });
+
+  annotations.forEach(flag => {
+    const label = document.createElement("label");
+    label.className = "check-chip";
+    label.innerHTML = `<input type="checkbox" checked><span class="flag-dot" style="background:${flag.color}"></span><span>${flag.shortLabel}</span>`;
+    label.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (state.flags.has(flag.key)) state.flags.delete(flag.key);
+      else state.flags.add(flag.key);
+      refresh();
+    });
+    els.flagControls.appendChild(label);
+  });
+
+  els.selectAllChannelsBtn.addEventListener("click", () => {
+    channels.forEach(c => state.channels.add(c.key));
+    refresh();
+  });
+  els.clearChannelsBtn.addEventListener("click", () => {
+    state.channels.clear();
+    refresh();
+  });
+  els.allFlagsBtn.addEventListener("click", () => {
+    annotations.forEach(a => state.flags.add(a.key));
+    refresh();
+  });
+  els.clearFlagsBtn.addEventListener("click", () => {
+    state.flags.clear();
+    refresh();
+  });
+}
+
+function syncControls() {
+  [...els.periodControls.children].forEach((btn, i) => btn.classList.toggle("active", periods[i].key === state.period));
+  [...els.metricControls.children].forEach((btn, i) => btn.classList.toggle("active", metrics[i].key === state.metric));
+  [...els.channelControls.children].forEach((chip, i) => {
+    const active = state.channels.has(channels[i].key);
+    chip.classList.toggle("active", active);
+    chip.querySelector("input").checked = active;
+    chip.style.opacity = active ? "1" : ".56";
+  });
+  [...els.flagControls.children].forEach((chip, i) => {
+    const active = state.flags.has(annotations[i].key);
+    chip.classList.toggle("active", active);
+    chip.querySelector("input").checked = active;
+    chip.style.opacity = active ? "1" : ".56";
+  });
+}
+
+function renderLegend(series) {
+  els.legend.innerHTML = "";
+  series.forEach(s => {
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `<span class="dot" style="background:${s.color}"></span><span>${s.channel}</span>`;
+    els.legend.appendChild(item);
+  });
+}
+
+function linePath(points, xScale, yScale) {
+  let d = "";
+  points.forEach((p, idx) => {
+    d += `${idx === 0 ? "M" : "L"}${xScale(p.index)},${yScale(p.y)} `;
+  });
+  return d.trim();
+}
+
+function refresh() {
+  syncControls();
+  renderChart();
+}
+
+function renderChart() {
+  const periodData = byPeriod(state.period);
+  const selectedChannels = channels.filter(c => state.channels.has(c.key)).map(c => c.key);
+  const enabledFlags = annotations.filter(a => state.flags.has(a.key));
+
+  els.chartTitle.textContent = `${metricLabel(state.metric)} - ${state.period}`;
+  els.chartMeta.textContent = state.period === "3 meses"
+    ? "Comparativo diário consolidando Janeiro, Fevereiro e Março."
+    : `Comparativo diário dos canais em ${state.period}.`;
+
+  const series = selectedChannels.map(channel => {
+    const points = periodData.map((d, index) => {
+      const value = d.channels[channel]?.[state.metric];
+      return {
+        index,
+        label: d.dataLabel,
+        periodo: d.periodo,
+        y: value == null ? null : Number(value)
+      };
+    }).filter(p => p.y != null && !Number.isNaN(p.y));
+    return {
+      channel,
+      color: channels.find(c => c.key === channel).color,
+      points
+    };
+  }).filter(s => s.points.length);
+
+  const unavailable = selectedChannels.filter(ch => !series.some(s => s.channel === ch));
+  const notes = [];
+  if (!selectedChannels.length) notes.push("Nenhum canal selecionado.");
+  if (unavailable.length) notes.push(`Sem dados para <strong>${unavailable.join(", ")}</strong> na métrica <strong>${metricLabel(state.metric)}</strong>.`);
+  if (state.metric !== "leads" && selectedChannels.includes("No Value")) notes.push("O canal <strong>No Value</strong> tem apenas <strong>Leads</strong> nos arquivos recebidos.");
+  if (!enabledFlags.length) notes.push("Todas as flags estão ocultas.");
+  if (notes.length) setStatus(notes.join(" "), unavailable.length ? "warn" : "info");
+  else setStatus("Visualização pronta. Os filtros estão no topo e cada flag pode ser ligada ou desligada individualmente.", "info");
+
+  renderLegend(series);
+  const svg = els.chartSvg;
+  svg.innerHTML = "";
+
+  if (!periodData.length || !series.length) {
+    els.emptyState.classList.add("visible");
+    els.emptyState.innerHTML = !periodData.length
+      ? "<div><strong>Sem dados para o período selecionado.</strong></div>"
+      : "<div><strong>Nada para desenhar.</strong><br/>Selecione pelo menos um canal com dados.</div>";
+    els.tooltip.classList.remove("visible");
+    return;
+  }
+  els.emptyState.classList.remove("visible");
+
+  const width = 1280;
+  const height = 690;
+  const topBand = enabledFlags.length ? Math.max(95, 26 + enabledFlags.length * 46) : 40;
+  const margin = { top: topBand, right: 24, bottom: 72, left: 84 };
+  const plotWidth = width - margin.left - margin.right;
+  const plotHeight = height - margin.top - margin.bottom;
+
+  append("rect", { x:0, y:0, width, height, fill:"#ffffff" });
+
+  const allPoints = series.flatMap(s => s.points);
+  const xMaxIndex = periodData.length - 1;
+  const rawMax = Math.max(...allPoints.map(p => p.y));
+  const yMax = rawMax <= 0 ? 1 : rawMax * 1.12;
+  const yMin = 0;
+  const xScale = i => margin.left + (plotWidth * (xMaxIndex === 0 ? 0 : i / xMaxIndex));
+  const yScale = v => margin.top + plotHeight - ((v - yMin) / Math.max(1, yMax - yMin)) * plotHeight;
+
+  // grid
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++) {
+    const v = yMin + (i / ticks) * (yMax - yMin);
+    const y = yScale(v);
+    append("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, stroke: "#e8edf5", "stroke-width": 1 });
+    const t = append("text", {
+      x: margin.left - 12, y: y + 4, fill: "#64748b", "font-size": 12, "text-anchor": "end"
+    });
+    t.textContent = state.metric === "taxa" ? v.toFixed(2).replace(".", ",") + "%" : formatNumber(v);
+  }
+
+  // month separators
+  if (state.period === "3 meses") {
+    const firstIndexes = [];
+    periodData.forEach((d, i) => {
+      if (i === 0 || d.periodo !== periodData[i-1].periodo) firstIndexes.push(i);
+    });
+    firstIndexes.forEach((idx, pos) => {
+      const label = periodData[idx].periodo;
+      const nextIdx = firstIndexes[pos + 1] ?? periodData.length;
+      const startX = xScale(idx);
+      const endX = xScale(nextIdx - 1);
+      if (idx !== 0) {
+        append("line", {
+          x1: startX - ((startX - xScale(idx-1))/2),
+          y1: margin.top,
+          x2: startX - ((startX - xScale(idx-1))/2),
+          y2: margin.top + plotHeight,
+          stroke: "#cbd5e1",
+          "stroke-width": 1.2,
+          "stroke-dasharray": "5 6"
+        });
+      }
+      const tx = append("text", {
+        x: (startX + endX) / 2, y: margin.top - 10, fill: "#475569", "font-size": 13, "font-weight": 800, "text-anchor": "middle"
+      });
+      tx.textContent = label;
+    });
+  }
+
+  // range annotations behind lines
+  enabledFlags.filter(a => a.type === "range").forEach((a, flagIdx) => {
+    const startIndex = periodData.findIndex(d => d.sortKey === a.startKey);
+    const endIndex = periodData.findIndex(d => d.sortKey === a.endKey);
+    if (startIndex === -1 || endIndex === -1) return;
+    const x1 = xScale(startIndex);
+    const x2 = xScale(endIndex);
+    append("rect", {
+      x: x1, y: margin.top,
+      width: Math.max(8, x2 - x1), height: plotHeight,
+      fill: a.fill, stroke: a.color, "stroke-dasharray": "5 5", "fill-opacity": .85, "stroke-opacity": .7
+    });
+  });
+
+  // axes
+  append("line", { x1: margin.left, y1: margin.top + plotHeight, x2: width - margin.right, y2: margin.top + plotHeight, stroke: "#94a3b8", "stroke-width": 1.4 });
+  append("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: margin.top + plotHeight, stroke: "#94a3b8", "stroke-width": 1.4 });
+
+  // x ticks
+  const tickStep = periodData.length > 62 ? 6 : periodData.length > 45 ? 4 : periodData.length > 20 ? 2 : 1;
+  periodData.forEach((d, idx) => {
+    if (idx % tickStep !== 0 && idx !== periodData.length - 1) return;
+    const x = xScale(idx);
+    append("line", { x1: x, y1: margin.top + plotHeight, x2: x, y2: margin.top + plotHeight + 6, stroke: "#94a3b8" });
+    const t = append("text", { x, y: margin.top + plotHeight + 22, fill: "#64748b", "font-size": 12, "text-anchor": "middle" });
+    t.textContent = d.dataLabel;
+  });
+
+  // line annotations + top labels
+  enabledFlags.forEach((a, i) => {
+    const boxY = 14 + i * 44;
+    if (a.type === "line") {
+      const index = periodData.findIndex(d => d.sortKey === a.dateKey);
+      if (index === -1) return;
+      const x = xScale(index);
+      append("line", {
+        x1: x, y1: margin.top, x2: x, y2: margin.top + plotHeight,
+        stroke: a.color, "stroke-width": 1.8, "stroke-dasharray": "7 5"
+      });
+      append("line", {
+        x1: x, y1: boxY + 28, x2: x, y2: margin.top - 4,
+        stroke: a.color, "stroke-width": 1.2, "stroke-dasharray": "4 5", "stroke-opacity": .8
+      });
+      const lines = wrapText(a.label, 28);
+      const boxWidth = Math.min(230, Math.max(150, lines.reduce((m, line) => Math.max(m, line.length), 0) * 6.4 + 26));
+      const boxHeight = 28 + (lines.length - 1) * 14;
+      const boxX = Math.max(10, Math.min(x - boxWidth / 2, width - boxWidth - 10));
+      append("rect", { x: boxX, y: boxY, width: boxWidth, height: boxHeight, rx: 10, ry: 10, fill: a.fill, stroke: a.color });
+      const tx = append("text", { x: boxX + 12, y: boxY + 17, fill: a.text, "font-size": 12, "font-weight": 700 });
+      lines.forEach((line, lineIdx) => {
+        const span = document.createElementNS(ns, "tspan");
+        span.setAttribute("x", boxX + 12);
+        span.setAttribute("dy", lineIdx === 0 ? 0 : 14);
+        span.textContent = line;
+        tx.appendChild(span);
+      });
+    } else if (a.type === "range") {
+      const startIndex = periodData.findIndex(d => d.sortKey === a.startKey);
+      const endIndex = periodData.findIndex(d => d.sortKey === a.endKey);
+      if (startIndex === -1 || endIndex === -1) return;
+      const x1 = xScale(startIndex);
+      const x2 = xScale(endIndex);
+      const center = (x1 + x2) / 2;
+      const lines = wrapText(a.label, 32);
+      const boxWidth = Math.min(260, Math.max(170, lines.reduce((m, line) => Math.max(m, line.length), 0) * 6.2 + 26));
+      const boxHeight = 28 + (lines.length - 1) * 14;
+      const boxX = Math.max(10, Math.min(center - boxWidth / 2, width - boxWidth - 10));
+      append("line", {
+        x1: center, y1: boxY + 28, x2: center, y2: margin.top - 4,
+        stroke: a.color, "stroke-width": 1.2, "stroke-dasharray": "4 5", "stroke-opacity": .8
+      });
+      append("rect", { x: boxX, y: boxY, width: boxWidth, height: boxHeight, rx: 10, ry: 10, fill: a.fill, stroke: a.color });
+      const tx = append("text", { x: boxX + 12, y: boxY + 17, fill: a.text, "font-size": 12, "font-weight": 700 });
+      lines.forEach((line, lineIdx) => {
+        const span = document.createElementNS(ns, "tspan");
+        span.setAttribute("x", boxX + 12);
+        span.setAttribute("dy", lineIdx === 0 ? 0 : 14);
+        span.textContent = line;
+        tx.appendChild(span);
+      });
+    }
+  });
+
+  // data series
+  series.forEach(s => {
+    append("path", {
+      d: linePath(s.points, xScale, yScale),
+      fill: "none",
+      stroke: s.color,
+      "stroke-width": 3,
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round"
+    });
+    s.points.forEach(p => {
+      const cx = xScale(p.index);
+      const cy = yScale(p.y);
+      append("circle", {
+        cx, cy, r: 4.2, fill: s.color, stroke: "#fff", "stroke-width": 2,
+        "data-channel": s.channel, "data-label": p.label, "data-period": p.periodo, "data-value": p.y
+      });
+      const hover = append("circle", {
+        cx, cy, r: 10, fill: "transparent", "data-channel": s.channel, "data-label": p.label, "data-period": p.periodo, "data-value": p.y
+      });
+      hover.addEventListener("mouseenter", evt => {
+        els.tooltip.innerHTML = `<strong>${s.channel}</strong><br>${p.label} - ${p.periodo}<br>${metricLabel(state.metric)}: <strong>${formatMetricValue(state.metric, p.y)}</strong>`;
+        els.tooltip.classList.add("visible");
+      });
+      hover.addEventListener("mousemove", evt => {
+        const rect = els.chartSvg.getBoundingClientRect();
+        els.tooltip.style.left = (evt.clientX - rect.left) + "px";
+        els.tooltip.style.top = (evt.clientY - rect.top) + "px";
+      });
+      hover.addEventListener("mouseleave", () => els.tooltip.classList.remove("visible"));
+    });
+  });
+}
+
+buildControls();
+refresh();
+</script>
+</body>
+</html>
