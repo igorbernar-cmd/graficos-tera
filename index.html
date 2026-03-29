@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gráfico Interativo - Janeiro, Fevereiro e Março</title>
+  <title>Análise Interativa - Geral e Migração do Blog</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -27,251 +27,113 @@
       background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
       color: var(--text);
     }
-    .page {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 22px;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-      margin-bottom: 16px;
-    }
-    h1 {
-      margin: 0 0 8px 0;
-      font-size: 30px;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.5;
-      max-width: 980px;
-    }
+    .page { max-width: 1480px; margin: 0 auto; padding: 22px; }
+    .header { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; margin-bottom:16px; }
+    h1 { margin:0 0 8px 0; font-size:30px; line-height:1.05; letter-spacing:-0.02em; }
+    .subtitle { color:var(--muted); font-size:15px; line-height:1.5; max-width:980px; }
     .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(37, 99, 235, 0.08);
-      color: var(--blue);
-      font-weight: 700;
-      font-size: 13px;
-      white-space: nowrap;
+      display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:999px;
+      background:rgba(37, 99, 235, 0.08); color:var(--blue); font-weight:700; font-size:13px; white-space:nowrap;
     }
-    .toolbar.card, .chart-card {
+    .card {
       background: var(--card);
       border: 1px solid rgba(226,232,240,0.88);
       border-radius: 22px;
       box-shadow: var(--shadow);
     }
-    .toolbar {
-      padding: 16px 18px 18px;
-      margin-bottom: 16px;
+    .tabs { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; }
+    .tab-btn, .seg-btn {
+      border:1px solid var(--border); background:#f8fafc; color:#334155; padding:10px 14px;
+      border-radius:999px; font-size:14px; font-weight:700; cursor:pointer; transition:all .18s ease;
     }
-    .toolbar-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr 1.2fr 1.25fr auto;
-      gap: 16px;
-      align-items: start;
-    }
-    .control-group {
-      min-width: 0;
-    }
-    .control-title {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: #475569;
-      margin-bottom: 10px;
-    }
-    .segmented, .toggle-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .seg-btn {
-      border: 1px solid var(--border);
-      background: #f8fafc;
-      color: #334155;
-      padding: 9px 13px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .18s ease;
-      user-select: none;
-    }
-    .seg-btn:hover { transform: translateY(-1px); border-color: #bfdbfe; }
-    .seg-btn.active {
-      background: #dbeafe;
-      border-color: #93c5fd;
-      color: #1d4ed8;
+    .tab-btn.active, .seg-btn.active {
+      background:#dbeafe; border-color:#93c5fd; color:#1d4ed8;
       box-shadow: inset 0 0 0 1px rgba(37,99,235,.05);
     }
+    .toolbar { padding:16px 18px 18px; margin-bottom:16px; }
+    .toolbar-grid {
+      display:grid; grid-template-columns: 1.2fr 1fr 1.2fr 1.25fr auto; gap:16px; align-items:start;
+    }
+    .control-title {
+      font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#475569; margin-bottom:10px;
+    }
+    .segmented, .toggle-list { display:flex; flex-wrap:wrap; gap:8px; }
     .check-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #fff;
-      font-size: 14px;
-      font-weight: 700;
-      color: #334155;
-      cursor: pointer;
-      user-select: none;
-      transition: all .18s ease;
+      display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:999px;
+      border:1px solid var(--border); background:#fff; font-size:14px; font-weight:700; color:#334155; cursor:pointer;
+      user-select:none; transition: all .18s ease;
     }
-    .check-chip input { display: none; }
-    .check-chip.active {
-      border-color: #cbd5e1;
-      background: #f8fafc;
-      box-shadow: inset 0 0 0 1px rgba(15,23,42,.04);
-    }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      flex: 0 0 auto;
-    }
-    .flag-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 2px;
-      flex: 0 0 auto;
-    }
-    .toolbar-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-self: end;
-    }
+    .check-chip input { display:none; }
+    .check-chip.active { border-color:#cbd5e1; background:#f8fafc; box-shadow: inset 0 0 0 1px rgba(15,23,42,.04); }
+    .dot, .flag-dot { width:10px; height:10px; border-radius:999px; flex:0 0 auto; }
+    .flag-dot { border-radius:2px; }
+    .toolbar-actions { display:flex; flex-direction:column; gap:8px; align-self:end; }
     .ghost-btn {
-      border: 1px solid var(--border);
-      background: #fff;
-      color: #334155;
-      padding: 9px 12px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
+      border:1px solid var(--border); background:#fff; color:#334155; padding:9px 12px; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer;
     }
-    .ghost-btn:hover { background: #f8fafc; }
+    .ghost-btn:hover { background:#f8fafc; }
     .status-note {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border-left: 4px solid var(--blue);
-      background: #f8fbff;
-      color: #1e3a8a;
-      line-height: 1.45;
-      font-size: 14px;
+      margin-top:14px; padding:12px 14px; border-radius:14px; border-left:4px solid var(--blue);
+      background:#f8fbff; color:#1e3a8a; line-height:1.45; font-size:14px;
     }
-    .chart-card {
-      padding: 18px 18px 16px;
+    .section { display:none; }
+    .section.active { display:block; }
+    .summary-grid {
+      display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:14px; margin-bottom:16px;
     }
+    .summary-card { padding:16px 18px; }
+    .summary-label { font-size:12px; text-transform:uppercase; letter-spacing:.06em; font-weight:800; color:#64748b; margin-bottom:8px; }
+    .summary-value { font-size:28px; font-weight:800; letter-spacing:-0.02em; margin-bottom:6px; }
+    .summary-sub { color:#64748b; font-size:13px; line-height:1.4; }
+    .small-grid {
+      display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:14px; margin-bottom:16px;
+    }
+    .small-card { padding:14px 16px; }
+    .small-title { display:flex; align-items:center; gap:8px; font-weight:800; margin-bottom:10px; }
+    .metric-row { display:flex; justify-content:space-between; gap:12px; font-size:14px; padding:5px 0; color:#334155; }
+    .metric-row strong { color:#0f172a; }
+    .chart-card { padding:18px; position:relative; }
     .chart-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 12px;
+      display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:12px;
     }
-    .chart-title {
-      margin: 0 0 6px 0;
-      font-size: 22px;
-      letter-spacing: -0.02em;
-    }
-    .chart-meta {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.45;
-    }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 10px;
-      max-width: 560px;
-    }
+    .chart-title { margin:0 0 6px 0; font-size:22px; letter-spacing:-0.02em; }
+    .chart-meta { color:var(--muted); font-size:14px; line-height:1.45; }
+    .legend { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:10px; max-width:700px; }
     .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: #334155;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: #f8fafc;
-      border: 1px solid #edf2f7;
+      display:inline-flex; align-items:center; gap:8px; font-size:13px; color:#334155; padding:7px 10px;
+      border-radius:999px; background:#f8fafc; border:1px solid var(--border);
     }
     .chart-wrap {
-      position: relative;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-      overflow: hidden;
-      min-height: 690px;
+      position:relative; width:100%; min-height:620px; border-radius:18px; overflow:hidden; background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border:1px solid #edf2f7;
     }
-    #chartSvg {
-      display: block;
-      width: 100%;
-      height: 690px;
-    }
+    .chart-svg { width:100%; height:100%; min-height:620px; display:block; }
     .tooltip {
-      position: absolute;
-      pointer-events: none;
-      background: rgba(15, 23, 42, 0.94);
-      color: white;
-      padding: 10px 12px;
-      border-radius: 12px;
-      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.22);
-      min-width: 170px;
-      font-size: 13px;
-      line-height: 1.4;
-      opacity: 0;
-      transform: translate(-50%, -110%);
-      transition: opacity .12s ease;
-      z-index: 5;
+      position:absolute; pointer-events:none; z-index:20; transform:translate(12px, -10px);
+      background:rgba(15,23,42,.96); color:#fff; padding:10px 12px; border-radius:12px; font-size:13px; line-height:1.4;
+      box-shadow:0 15px 35px rgba(15,23,42,.25); opacity:0; transition:opacity .12s ease;
+      max-width:280px;
     }
-    .tooltip.visible { opacity: 1; }
+    .tooltip.visible { opacity:1; }
     .empty-state {
-      position: absolute;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
-      color: var(--muted);
-      font-size: 16px;
-      background: rgba(255,255,255,.92);
+      position:absolute; inset:0; display:none; align-items:center; justify-content:center; text-align:center; color:#64748b; font-size:15px;
+      background:linear-gradient(180deg, rgba(255,255,255,.86), rgba(248,250,252,.94));
     }
-    .empty-state.visible { display: flex; }
-    .footer-note {
-      margin-top: 12px;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .empty-state.visible { display:flex; }
+    .compare-grid { display:grid; grid-template-columns: 1fr; gap:16px; }
+    .sub-card { padding:16px; }
+    .subhead { font-size:18px; margin:0 0 6px 0; }
+    .submeta { color:#64748b; font-size:14px; line-height:1.45; margin-bottom:10px; }
     @media (max-width: 1180px) {
-      .toolbar-grid { grid-template-columns: 1fr 1fr; }
-      .toolbar-actions { flex-direction: row; align-self: start; }
-      .chart-top { flex-direction: column; }
-      .legend { justify-content: flex-start; max-width: none; }
+      .toolbar-grid { grid-template-columns:1fr 1fr; }
+      .toolbar-actions { flex-direction:row; align-self:start; }
+      .summary-grid, .small-grid, .compare-grid { grid-template-columns:1fr 1fr; }
     }
     @media (max-width: 760px) {
-      .page { padding: 14px; }
-      .header { flex-direction: column; }
-      .toolbar-grid { grid-template-columns: 1fr; }
-      .chart-wrap, #chartSvg { min-height: 600px; height: 600px; }
+      .header { flex-direction:column; }
+      .summary-grid, .small-grid, .compare-grid, .toolbar-grid { grid-template-columns:1fr; }
+      .chart-top { flex-direction:column; }
+      .legend { justify-content:flex-start; }
     }
   </style>
 </head>
@@ -279,72 +141,128 @@
   <div class="page">
     <div class="header">
       <div>
-        <h1>Gráfico interativo de linha</h1>
+        <h1>Análise Interativa de Performance</h1>
         <div class="subtitle">
-          Agora com <strong>Janeiro, Fevereiro e Março</strong>, filtros na horizontal, seleção de métricas, seleção livre de canais e controle individual das flags de eventos.
+          Painel com <strong>Análise Geral</strong> e <strong>Análise da Migração do Blog</strong>.
+          Mantive os filtros do gráfico original e adicionei os <strong>totais por período</strong>, além de uma visão específica da migração em 22/02.
         </div>
       </div>
-      <div class="pill">Arquivos usados: Janeiro.csv, Fevereiro.csv e Março.csv</div>
+      <div class="pill">Arquivos usados: Report Tera Atualizado - Janeiro.csv, Fevereiro.csv e Março.csv</div>
     </div>
 
-    <div class="toolbar card">
-      <div class="toolbar-grid">
-        <div class="control-group">
-          <div class="control-title">Período</div>
-          <div class="segmented" id="periodControls"></div>
-        </div>
-
-        <div class="control-group">
-          <div class="control-title">Métrica</div>
-          <div class="segmented" id="metricControls"></div>
-        </div>
-
-        <div class="control-group">
-          <div class="control-title">Canais</div>
-          <div class="toggle-list" id="channelControls"></div>
-        </div>
-
-        <div class="control-group">
-          <div class="control-title">Flags de eventos</div>
-          <div class="toggle-list" id="flagControls"></div>
-        </div>
-
-        <div class="toolbar-actions">
-          <button class="ghost-btn" id="selectAllChannelsBtn">Todos canais</button>
-          <button class="ghost-btn" id="clearChannelsBtn">Limpar canais</button>
-          <button class="ghost-btn" id="allFlagsBtn">Todas flags</button>
-          <button class="ghost-btn" id="clearFlagsBtn">Ocultar flags</button>
-        </div>
-      </div>
-
-      <div class="status-note" id="statusNote">
-        Selecione período, métrica, canais e flags para atualizar o gráfico.
-      </div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="geral">Análise Geral</button>
+      <button class="tab-btn" data-tab="migracao">Análise da Migração</button>
     </div>
 
-    <div class="chart-card">
-      <div class="chart-top">
-        <div>
-          <h2 class="chart-title" id="chartTitle">Leads - 3 meses</h2>
-          <div class="chart-meta" id="chartMeta">Comparativo diário por canal no período selecionado.</div>
+    <section id="tab-geral" class="section active">
+      <div class="toolbar card">
+        <div class="toolbar-grid">
+          <div>
+            <div class="control-title">Período</div>
+            <div id="generalPeriodControls" class="segmented"></div>
+          </div>
+          <div>
+            <div class="control-title">Métrica</div>
+            <div id="generalMetricControls" class="segmented"></div>
+          </div>
+          <div>
+            <div class="control-title">Canais</div>
+            <div id="generalChannelControls" class="toggle-list"></div>
+          </div>
+          <div>
+            <div class="control-title">Flags</div>
+            <div id="generalFlagControls" class="toggle-list"></div>
+          </div>
+          <div class="toolbar-actions">
+            <button id="generalSelectAllChannelsBtn" class="ghost-btn">Selecionar canais</button>
+            <button id="generalClearChannelsBtn" class="ghost-btn">Limpar canais</button>
+            <button id="generalAllFlagsBtn" class="ghost-btn">Mostrar flags</button>
+            <button id="generalClearFlagsBtn" class="ghost-btn">Ocultar flags</button>
+          </div>
         </div>
-        <div class="legend" id="legend"></div>
+        <div id="generalStatusNote" class="status-note">Carregando visualização geral...</div>
       </div>
 
-      <div class="chart-wrap">
-        <svg id="chartSvg" viewBox="0 0 1280 690" preserveAspectRatio="none" aria-label="Gráfico de linha interativo"></svg>
-        <div class="empty-state" id="emptyState"></div>
-        <div class="tooltip" id="tooltip"></div>
+      <div id="generalSummary" class="summary-grid"></div>
+      <div id="generalChannelSummary" class="small-grid"></div>
+
+      <div class="chart-card card">
+        <div class="chart-top">
+          <div>
+            <h2 id="generalChartTitle" class="chart-title">Gráfico Geral</h2>
+            <div id="generalChartMeta" class="chart-meta"></div>
+          </div>
+          <div id="generalLegend" class="legend"></div>
+        </div>
+        <div class="chart-wrap">
+          <svg id="generalChartSvg" class="chart-svg" viewBox="0 0 1280 690" preserveAspectRatio="xMidYMid meet"></svg>
+          <div id="generalTooltip" class="tooltip"></div>
+          <div id="generalEmptyState" class="empty-state"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-migracao" class="section">
+      <div class="toolbar card">
+        <div class="toolbar-grid" style="grid-template-columns: 1fr 1.2fr auto;">
+          <div>
+            <div class="control-title">Métrica</div>
+            <div id="migrationMetricControls" class="segmented"></div>
+          </div>
+          <div>
+            <div class="control-title">Canais</div>
+            <div id="migrationChannelControls" class="toggle-list"></div>
+          </div>
+          <div class="toolbar-actions">
+            <button id="migrationSelectAllChannelsBtn" class="ghost-btn">Selecionar canais</button>
+            <button id="migrationClearChannelsBtn" class="ghost-btn">Limpar canais</button>
+          </div>
+        </div>
+        <div id="migrationStatusNote" class="status-note">
+          Nesta aba, a análise considera o período <strong>01/02 a 15/03</strong> e a comparação sobreposta entre
+          <strong>01/02 a 22/02</strong> e <strong>22/02 a 15/03</strong>, com a migração do Blog marcada em <strong>22/02</strong>.
+        </div>
       </div>
 
-      <div class="footer-note">
-        Eventos disponíveis como flags individuais: <strong>22/02</strong> (Migração do Blog), <strong>09/03</strong> (Mudança da home page do site), <strong>11/03 a 19/03</strong> (Inserção de 20 CTA's posts mais acessados) e <strong>19/03</strong> (Mudança dos 3 banners fixos - blog e site).
+      <div id="migrationSummary" class="summary-grid"></div>
+
+      <div class="compare-grid">
+        <div class="chart-card card">
+          <div class="chart-top">
+            <div>
+              <h2 class="chart-title">Período total da análise</h2>
+              <div class="chart-meta">Linha diária de 01/02 a 15/03, com a flag da migração do Blog em 22/02.</div>
+            </div>
+            <div id="migrationLegend" class="legend"></div>
+          </div>
+          <div class="chart-wrap">
+            <svg id="migrationTimelineSvg" class="chart-svg" viewBox="0 0 1280 690" preserveAspectRatio="xMidYMid meet"></svg>
+            <div id="migrationTimelineTooltip" class="tooltip"></div>
+            <div id="migrationTimelineEmpty" class="empty-state"></div>
+          </div>
+        </div>
+
+        <div class="chart-card card">
+          <div class="chart-top">
+            <div>
+              <h2 class="chart-title">Comparação sobreposta pré x pós</h2>
+              <div class="chart-meta">Comparação em sobreposição entre os 22 dias pré-migração e os 22 dias pós-migração.</div>
+            </div>
+            <div id="overlayLegend" class="legend"></div>
+          </div>
+          <div class="chart-wrap">
+            <svg id="migrationOverlaySvg" class="chart-svg" viewBox="0 0 1280 690" preserveAspectRatio="xMidYMid meet"></svg>
+            <div id="migrationOverlayTooltip" class="tooltip"></div>
+            <div id="migrationOverlayEmpty" class="empty-state"></div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
 
 <script>
-const rawData = [{"periodo": "Janeiro", "monthNum": 1, "dia": 1, "dataLabel": "01/01", "sortKey": "2026-01-01", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 67, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 231, "leads": 1, "taxa": 0.27}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 2, "dataLabel": "02/01", "sortKey": "2026-01-02", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 235, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 712, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 3, "dataLabel": "03/01", "sortKey": "2026-01-03", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 357, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 331, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 4, "dataLabel": "04/01", "sortKey": "2026-01-04", "channels": {"No Value": {"leads": 30}, "Blog": {"trafego": 607, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 511, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 5, "dataLabel": "05/01", "sortKey": "2026-01-05", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 483, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1344, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 6, "dataLabel": "06/01", "sortKey": "2026-01-06", "channels": {"No Value": {"leads": 67}, "Blog": {"trafego": 434, "leads": 1, "taxa": 0.23}, "Site": {"trafego": 1607, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 16, "leads": 2, "taxa": 12.5}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 7, "dataLabel": "07/01", "sortKey": "2026-01-07", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 540, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1511, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 8, "dataLabel": "08/01", "sortKey": "2026-01-08", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 651, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1719, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 9, "dataLabel": "09/01", "sortKey": "2026-01-09", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 496, "leads": 1, "taxa": 0.2}, "Site": {"trafego": 1389, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 10, "dataLabel": "10/01", "sortKey": "2026-01-10", "channels": {"No Value": {"leads": 15}, "Blog": {"trafego": 169, "leads": 1, "taxa": 0.58}, "Site": {"trafego": 441, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 11, "dataLabel": "11/01", "sortKey": "2026-01-11", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 189, "leads": 4, "taxa": 0.8}, "Site": {"trafego": 420, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 2, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 12, "dataLabel": "12/01", "sortKey": "2026-01-12", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 524, "leads": 6, "taxa": 3.51}, "Site": {"trafego": 1440, "leads": 1, "taxa": 0.04}, "ChatGPT": {"trafego": 10, "leads": 1, "taxa": 10.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 13, "dataLabel": "13/01", "sortKey": "2026-01-13", "channels": {"No Value": {"leads": 60}, "Blog": {"trafego": 523, "leads": 1, "taxa": 0.53}, "Site": {"trafego": 1710, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 20, "leads": 2, "taxa": 10.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 14, "dataLabel": "14/01", "sortKey": "2026-01-14", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 436, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 1595, "leads": 6, "taxa": 0.18}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 15, "dataLabel": "15/01", "sortKey": "2026-01-15", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 673, "leads": 2, "taxa": 0.38}, "Site": {"trafego": 1925, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 16, "dataLabel": "16/01", "sortKey": "2026-01-16", "channels": {"No Value": {"leads": 42}, "Blog": {"trafego": 735, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1391, "leads": 1, "taxa": 0.04}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 17, "dataLabel": "17/01", "sortKey": "2026-01-17", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 818, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 687, "leads": 1, "taxa": 0.05}, "ChatGPT": {"trafego": 3, "leads": 1, "taxa": 33.33}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 18, "dataLabel": "18/01", "sortKey": "2026-01-18", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 533, "leads": 1, "taxa": 0.13}, "Site": {"trafego": 595, "leads": 2, "taxa": 0.12}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 19, "dataLabel": "19/01", "sortKey": "2026-01-19", "channels": {"No Value": {"leads": 188}, "Blog": {"trafego": 732, "leads": 2, "taxa": 0.24}, "Site": {"trafego": 2004, "leads": 4, "taxa": 0.09}, "ChatGPT": {"trafego": 16, "leads": 1, "taxa": 6.25}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 20, "dataLabel": "20/01", "sortKey": "2026-01-20", "channels": {"No Value": {"leads": 71}, "Blog": {"trafego": 614, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 2072, "leads": 9, "taxa": 0.14}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 21, "dataLabel": "21/01", "sortKey": "2026-01-21", "channels": {"No Value": {"leads": 85}, "Blog": {"trafego": 638, "leads": 2, "taxa": 0.31}, "Site": {"trafego": 2076, "leads": 18, "taxa": 0.31}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 22, "dataLabel": "22/01", "sortKey": "2026-01-22", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 733, "leads": 2, "taxa": 0.27}, "Site": {"trafego": 1983, "leads": 21, "taxa": 0.4}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 23, "dataLabel": "23/01", "sortKey": "2026-01-23", "channels": {"No Value": {"leads": 111}, "Blog": {"trafego": 841, "leads": 1, "taxa": 0.12}, "Site": {"trafego": 2331, "leads": 7, "taxa": 0.12}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 24, "dataLabel": "24/01", "sortKey": "2026-01-24", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 383, "leads": 2, "taxa": 0.5}, "Site": {"trafego": 1559, "leads": 6, "taxa": 0.18}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 25, "dataLabel": "25/01", "sortKey": "2026-01-25", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 319, "leads": 2, "taxa": 0.62}, "Site": {"trafego": 2157, "leads": 11, "taxa": 0.28}, "ChatGPT": {"trafego": 7, "leads": 1, "taxa": 14.29}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 26, "dataLabel": "26/01", "sortKey": "2026-01-26", "channels": {"No Value": {"leads": 138}, "Blog": {"trafego": 543, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 5950, "leads": 17, "taxa": 0.19}, "ChatGPT": {"trafego": 20, "leads": 1, "taxa": 5.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 27, "dataLabel": "27/01", "sortKey": "2026-01-27", "channels": {"No Value": {"leads": 115}, "Blog": {"trafego": 508, "leads": 4, "taxa": 0.77}, "Site": {"trafego": 6367, "leads": 22, "taxa": 0.24}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 28, "dataLabel": "28/01", "sortKey": "2026-01-28", "channels": {"No Value": {"leads": 93}, "Blog": {"trafego": 570, "leads": 2, "taxa": 0.34}, "Site": {"trafego": 5598, "leads": 19, "taxa": 0.24}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 29, "dataLabel": "29/01", "sortKey": "2026-01-29", "channels": {"No Value": {"leads": 540}, "Blog": {"trafego": 528, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 7357, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 30, "dataLabel": "30/01", "sortKey": "2026-01-30", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 495, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4152, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 31, "dataLabel": "31/01", "sortKey": "2026-01-31", "channels": {"No Value": {"leads": 6}, "Blog": {"trafego": 237, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1531, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 1, "dataLabel": "01/02", "sortKey": "2026-02-01", "channels": {"No Value": {"leads": 22}, "Blog": {"trafego": 259, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1479, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 2, "dataLabel": "02/02", "sortKey": "2026-02-02", "channels": {"No Value": {"leads": 50}, "Blog": {"trafego": 474, "leads": 1, "taxa": 0.21}, "Site": {"trafego": 5020, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 13, "leads": 2, "taxa": 15.38}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 3, "dataLabel": "03/02", "sortKey": "2026-02-03", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 539, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4215, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 4, "dataLabel": "04/02", "sortKey": "2026-02-04", "channels": {"No Value": {"leads": 54}, "Blog": {"trafego": 537, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 3522, "leads": 3, "taxa": 0.06}, "ChatGPT": {"trafego": 9, "leads": 1, "taxa": 11.11}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 5, "dataLabel": "05/02", "sortKey": "2026-02-05", "channels": {"No Value": {"leads": 62}, "Blog": {"trafego": 567, "leads": 2, "taxa": 0.34}, "Site": {"trafego": 3467, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 25, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 6, "dataLabel": "06/02", "sortKey": "2026-02-06", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 511, "leads": 2, "taxa": 0.39}, "Site": {"trafego": 3248, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 8, "leads": 2, "taxa": 25.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 7, "dataLabel": "07/02", "sortKey": "2026-02-07", "channels": {"No Value": {"leads": 28}, "Blog": {"trafego": 219, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1321, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 8, "dataLabel": "08/02", "sortKey": "2026-02-08", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 225, "leads": 3, "taxa": 1.32}, "Site": {"trafego": 1399, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 9, "dataLabel": "09/02", "sortKey": "2026-02-09", "channels": {"No Value": {"leads": 74}, "Blog": {"trafego": 595, "leads": 5, "taxa": 0.84}, "Site": {"trafego": 4104, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 12, "leads": 1, "taxa": 8.33}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 10, "dataLabel": "10/02", "sortKey": "2026-02-10", "channels": {"No Value": {"leads": 92}, "Blog": {"trafego": 606, "leads": 6, "taxa": 0.99}, "Site": {"trafego": 4224, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 21, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 11, "dataLabel": "11/02", "sortKey": "2026-02-11", "channels": {"No Value": {"leads": 81}, "Blog": {"trafego": 580, "leads": 4, "taxa": 0.69}, "Site": {"trafego": 4295, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 6, "leads": 1, "taxa": 16.67}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 12, "dataLabel": "12/02", "sortKey": "2026-02-12", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 575, "leads": 8, "taxa": 1.39}, "Site": {"trafego": 3974, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 13, "dataLabel": "13/02", "sortKey": "2026-02-13", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 498, "leads": 2, "taxa": 0.4}, "Site": {"trafego": 3203, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 14, "dataLabel": "14/02", "sortKey": "2026-02-14", "channels": {"No Value": {"leads": 19}, "Blog": {"trafego": 165, "leads": 2, "taxa": 1.21}, "Site": {"trafego": 1331, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 1, "taxa": 25.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 15, "dataLabel": "15/02", "sortKey": "2026-02-15", "channels": {"No Value": {"leads": 25}, "Blog": {"trafego": 137, "leads": 5, "taxa": 3.57}, "Site": {"trafego": 1226, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 2, "taxa": 18.18}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 16, "dataLabel": "16/02", "sortKey": "2026-02-16", "channels": {"No Value": {"leads": 37}, "Blog": {"trafego": 210, "leads": 7, "taxa": 3.32}, "Site": {"trafego": 2438, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 17, "dataLabel": "17/02", "sortKey": "2026-02-17", "channels": {"No Value": {"leads": 38}, "Blog": {"trafego": 227, "leads": 12, "taxa": 5.22}, "Site": {"trafego": 2173, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 18, "dataLabel": "18/02", "sortKey": "2026-02-18", "channels": {"No Value": {"leads": 62}, "Blog": {"trafego": 470, "leads": 15, "taxa": 3.02}, "Site": {"trafego": 3905, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 3, "taxa": 20.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 19, "dataLabel": "19/02", "sortKey": "2026-02-19", "channels": {"No Value": {"leads": 135}, "Blog": {"trafego": 545, "leads": 5, "taxa": 0.81}, "Site": {"trafego": 5766, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 20, "dataLabel": "20/02", "sortKey": "2026-02-20", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 538, "leads": 3, "taxa": 0.48}, "Site": {"trafego": 4842, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 21, "dataLabel": "21/02", "sortKey": "2026-02-21", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 267, "leads": 3, "taxa": 0.94}, "Site": {"trafego": 1793, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 22, "dataLabel": "22/02", "sortKey": "2026-02-22", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 316, "leads": 12, "taxa": 4.1}, "Site": {"trafego": 1897, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 23, "dataLabel": "23/02", "sortKey": "2026-02-23", "channels": {"No Value": {"leads": 174}, "Blog": {"trafego": 933, "leads": 5, "taxa": 0.63}, "Site": {"trafego": 5991, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 24, "dataLabel": "24/02", "sortKey": "2026-02-24", "channels": {"No Value": {"leads": 65}, "Blog": {"trafego": 899, "leads": 9, "taxa": 1.14}, "Site": {"trafego": 5312, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 1, "taxa": 20.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 25, "dataLabel": "25/02", "sortKey": "2026-02-25", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 792, "leads": 3, "taxa": 0.44}, "Site": {"trafego": 4861, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 6, "leads": 2, "taxa": 33.33}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 26, "dataLabel": "26/02", "sortKey": "2026-02-26", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 835, "leads": 1, "taxa": 0.13}, "Site": {"trafego": 4936, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 27, "dataLabel": "27/02", "sortKey": "2026-02-27", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 564, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4230, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 28, "dataLabel": "28/02", "sortKey": "2026-02-28", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 295, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1592, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 1, "dataLabel": "01/03", "sortKey": "2026-03-01", "channels": {"No Value": {"leads": 16}, "Blog": {"trafego": 285, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1556, "leads": 2, "taxa": 0.12}, "ChatGPT": {"trafego": 5, "leads": 1, "taxa": 20.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 2, "dataLabel": "02/03", "sortKey": "2026-03-02", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 683, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3850, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 13, "leads": 1, "taxa": 7.69}}}, {"periodo": "Março", "monthNum": 3, "dia": 3, "dataLabel": "03/03", "sortKey": "2026-03-03", "channels": {"No Value": {"leads": 66}, "Blog": {"trafego": 683, "leads": 1, "taxa": 0.16}, "Site": {"trafego": 4417, "leads": 13, "taxa": 0.17}, "ChatGPT": {"trafego": 13, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 4, "dataLabel": "04/03", "sortKey": "2026-03-04", "channels": {"No Value": {"leads": 67}, "Blog": {"trafego": 639, "leads": 3, "taxa": 0.52}, "Site": {"trafego": 4613, "leads": 16, "taxa": 0.25}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 5, "dataLabel": "05/03", "sortKey": "2026-03-05", "channels": {"No Value": {"leads": 70}, "Blog": {"trafego": 699, "leads": 1, "taxa": 0.15}, "Site": {"trafego": 4199, "leads": 14, "taxa": 0.19}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 6, "dataLabel": "06/03", "sortKey": "2026-03-06", "channels": {"No Value": {"leads": 83}, "Blog": {"trafego": 539, "leads": 1, "taxa": 0.2}, "Site": {"trafego": 4193, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 8, "leads": 1, "taxa": 12.5}}}, {"periodo": "Março", "monthNum": 3, "dia": 7, "dataLabel": "07/03", "sortKey": "2026-03-07", "channels": {"No Value": {"leads": 19}, "Blog": {"trafego": 235, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1540, "leads": 4, "taxa": 0.19}, "ChatGPT": {"trafego": 13, "leads": 1, "taxa": 7.69}}}, {"periodo": "Março", "monthNum": 3, "dia": 8, "dataLabel": "08/03", "sortKey": "2026-03-08", "channels": {"No Value": {"leads": 26}, "Blog": {"trafego": 227, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1566, "leads": 5, "taxa": 0.23}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 9, "dataLabel": "09/03", "sortKey": "2026-03-09", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 523, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4268, "leads": 10, "taxa": 0.17}, "ChatGPT": {"trafego": 10, "leads": 1, "taxa": 10.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 10, "dataLabel": "10/03", "sortKey": "2026-03-10", "channels": {"No Value": {"leads": 86}, "Blog": {"trafego": 691, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5638, "leads": 12, "taxa": 0.14}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 11, "dataLabel": "11/03", "sortKey": "2026-03-11", "channels": {"No Value": {"leads": 92}, "Blog": {"trafego": 698, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4145, "leads": 28, "taxa": 0.39}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Março", "monthNum": 3, "dia": 12, "dataLabel": "12/03", "sortKey": "2026-03-12", "channels": {"No Value": {"leads": 89}, "Blog": {"trafego": 661, "leads": 3, "taxa": 0.52}, "Site": {"trafego": 4026, "leads": 15, "taxa": 0.22}, "ChatGPT": {"trafego": 21, "leads": 1, "taxa": 4.76}}}, {"periodo": "Março", "monthNum": 3, "dia": 13, "dataLabel": "13/03", "sortKey": "2026-03-13", "channels": {"No Value": {"leads": 52}, "Blog": {"trafego": 586, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3261, "leads": 5, "taxa": 0.08}, "ChatGPT": {"trafego": 16, "leads": 1, "taxa": 6.25}}}, {"periodo": "Março", "monthNum": 3, "dia": 14, "dataLabel": "14/03", "sortKey": "2026-03-14", "channels": {"No Value": {"leads": 41}, "Blog": {"trafego": 251, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1495, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 15, "dataLabel": "15/03", "sortKey": "2026-03-15", "channels": {"No Value": {"leads": 26}, "Blog": {"trafego": 306, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1774, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 16, "dataLabel": "16/03", "sortKey": "2026-03-16", "channels": {"No Value": {"leads": 97}, "Blog": {"trafego": 546, "leads": 2, "taxa": 0.39}, "Site": {"trafego": 5222, "leads": 13, "taxa": 0.17}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Março", "monthNum": 3, "dia": 17, "dataLabel": "17/03", "sortKey": "2026-03-17", "channels": {"No Value": {"leads": 89}, "Blog": {"trafego": 513, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5585, "leads": 11, "taxa": 0.13}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 18, "dataLabel": "18/03", "sortKey": "2026-03-18", "channels": {"No Value": {"leads": 118}, "Blog": {"trafego": 430, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 6199, "leads": 23, "taxa": 0.18}, "ChatGPT": {"trafego": 14, "leads": 4, "taxa": 28.57}}}, {"periodo": "Março", "monthNum": 3, "dia": 19, "dataLabel": "19/03", "sortKey": "2026-03-19", "channels": {"No Value": {"leads": 149}, "Blog": {"trafego": 463, "leads": 1, "taxa": 0.25}, "Site": {"trafego": 5595, "leads": 25, "taxa": 0.22}, "ChatGPT": {"trafego": 25, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 20, "dataLabel": "20/03", "sortKey": "2026-03-20", "channels": {"No Value": {"leads": 126}, "Blog": {"trafego": 389, "leads": 1, "taxa": 0.29}, "Site": {"trafego": 5620, "leads": 28, "taxa": 0.29}, "ChatGPT": {"trafego": 15, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 21, "dataLabel": "21/03", "sortKey": "2026-03-21", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 237, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3247, "leads": 4, "taxa": 0.05}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 22, "dataLabel": "22/03", "sortKey": "2026-03-22", "channels": {"No Value": {"leads": 39}, "Blog": {"trafego": 223, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3343, "leads": 7, "taxa": 0.08}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 23, "dataLabel": "23/03", "sortKey": "2026-03-23", "channels": {"No Value": {"leads": 187}, "Blog": {"trafego": 510, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 10448, "leads": 58, "taxa": 0.38}, "ChatGPT": {"trafego": 17, "leads": 2, "taxa": 11.76}}}, {"periodo": "Março", "monthNum": 3, "dia": 24, "dataLabel": "24/03", "sortKey": "2026-03-24", "channels": {"No Value": {"leads": 334}, "Blog": {"trafego": 609, "leads": 1, "taxa": 0.24}, "Site": {"trafego": 9580, "leads": 59, "taxa": 0.38}, "ChatGPT": {"trafego": 23, "leads": 2, "taxa": 8.7}}}, {"periodo": "Março", "monthNum": 3, "dia": 25, "dataLabel": "25/03", "sortKey": "2026-03-25", "channels": {"No Value": {"leads": 165}, "Blog": {"trafego": 489, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5693, "leads": 9, "taxa": 0.15}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}];
+const rawData = [{"periodo": "Janeiro", "monthNum": 1, "dia": 1, "dataLabel": "01/01", "sortKey": "2026-01-01", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 112, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 231, "leads": 1, "taxa": 0.43}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 2, "dataLabel": "02/01", "sortKey": "2026-01-02", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 271, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 712, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 3, "dataLabel": "03/01", "sortKey": "2026-01-03", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 339, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 331, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 4, "dataLabel": "04/01", "sortKey": "2026-01-04", "channels": {"No Value": {"leads": 30}, "Blog": {"trafego": 643, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 511, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 5, "dataLabel": "05/01", "sortKey": "2026-01-05", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 648, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1344, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 6, "dataLabel": "06/01", "sortKey": "2026-01-06", "channels": {"No Value": {"leads": 67}, "Blog": {"trafego": 502, "leads": 1, "taxa": 0.2}, "Site": {"trafego": 1607, "leads": 1, "taxa": 0.06}, "ChatGPT": {"trafego": 16, "leads": 2, "taxa": 12.5}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 7, "dataLabel": "07/01", "sortKey": "2026-01-07", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 593, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1511, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 8, "dataLabel": "08/01", "sortKey": "2026-01-08", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 738, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1719, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 9, "dataLabel": "09/01", "sortKey": "2026-01-09", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 579, "leads": 1, "taxa": 0.17}, "Site": {"trafego": 1389, "leads": 1, "taxa": 0.07}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 10, "dataLabel": "10/01", "sortKey": "2026-01-10", "channels": {"No Value": {"leads": 15}, "Blog": {"trafego": 211, "leads": 1, "taxa": 0.47}, "Site": {"trafego": 441, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 11, "dataLabel": "11/01", "sortKey": "2026-01-11", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 231, "leads": 4, "taxa": 1.73}, "Site": {"trafego": 420, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 2, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 12, "dataLabel": "12/01", "sortKey": "2026-01-12", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 559, "leads": 6, "taxa": 1.07}, "Site": {"trafego": 1440, "leads": 1, "taxa": 0.07}, "ChatGPT": {"trafego": 10, "leads": 1, "taxa": 10.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 13, "dataLabel": "13/01", "sortKey": "2026-01-13", "channels": {"No Value": {"leads": 60}, "Blog": {"trafego": 617, "leads": 1, "taxa": 0.16}, "Site": {"trafego": 1710, "leads": 1, "taxa": 0.06}, "ChatGPT": {"trafego": 20, "leads": 2, "taxa": 10.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 14, "dataLabel": "14/01", "sortKey": "2026-01-14", "channels": {"No Value": {"leads": 55}, "Blog": {"trafego": 514, "leads": 1, "taxa": 0.19}, "Site": {"trafego": 1595, "leads": 6, "taxa": 0.38}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 15, "dataLabel": "15/01", "sortKey": "2026-01-15", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 704, "leads": 2, "taxa": 0.28}, "Site": {"trafego": 1925, "leads": 1, "taxa": 0.05}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 16, "dataLabel": "16/01", "sortKey": "2026-01-16", "channels": {"No Value": {"leads": 42}, "Blog": {"trafego": 701, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1391, "leads": 1, "taxa": 0.07}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 17, "dataLabel": "17/01", "sortKey": "2026-01-17", "channels": {"No Value": {"leads": 14}, "Blog": {"trafego": 902, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 687, "leads": 1, "taxa": 0.15}, "ChatGPT": {"trafego": 3, "leads": 1, "taxa": 33.33}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 18, "dataLabel": "18/01", "sortKey": "2026-01-18", "channels": {"No Value": {"leads": 10}, "Blog": {"trafego": 710, "leads": 1, "taxa": 0.14}, "Site": {"trafego": 595, "leads": 2, "taxa": 0.34}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 19, "dataLabel": "19/01", "sortKey": "2026-01-19", "channels": {"No Value": {"leads": 188}, "Blog": {"trafego": 820, "leads": 2, "taxa": 0.24}, "Site": {"trafego": 2004, "leads": 4, "taxa": 0.2}, "ChatGPT": {"trafego": 16, "leads": 1, "taxa": 6.25}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 20, "dataLabel": "20/01", "sortKey": "2026-01-20", "channels": {"No Value": {"leads": 71}, "Blog": {"trafego": 705, "leads": 1, "taxa": 0.14}, "Site": {"trafego": 2072, "leads": 9, "taxa": 0.43}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 21, "dataLabel": "21/01", "sortKey": "2026-01-21", "channels": {"No Value": {"leads": 85}, "Blog": {"trafego": 717, "leads": 2, "taxa": 0.28}, "Site": {"trafego": 2076, "leads": 18, "taxa": 0.87}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 22, "dataLabel": "22/01", "sortKey": "2026-01-22", "channels": {"No Value": {"leads": 69}, "Blog": {"trafego": 736, "leads": 2, "taxa": 0.27}, "Site": {"trafego": 1983, "leads": 21, "taxa": 1.06}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 23, "dataLabel": "23/01", "sortKey": "2026-01-23", "channels": {"No Value": {"leads": 111}, "Blog": {"trafego": 981, "leads": 1, "taxa": 0.1}, "Site": {"trafego": 2331, "leads": 7, "taxa": 0.3}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 24, "dataLabel": "24/01", "sortKey": "2026-01-24", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 524, "leads": 2, "taxa": 0.38}, "Site": {"trafego": 1559, "leads": 6, "taxa": 0.38}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 25, "dataLabel": "25/01", "sortKey": "2026-01-25", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 344, "leads": 2, "taxa": 0.58}, "Site": {"trafego": 2157, "leads": 11, "taxa": 0.51}, "ChatGPT": {"trafego": 7, "leads": 1, "taxa": 14.29}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 26, "dataLabel": "26/01", "sortKey": "2026-01-26", "channels": {"No Value": {"leads": 138}, "Blog": {"trafego": 715, "leads": 1, "taxa": 0.14}, "Site": {"trafego": 5950, "leads": 17, "taxa": 0.29}, "ChatGPT": {"trafego": 20, "leads": 1, "taxa": 5.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 27, "dataLabel": "27/01", "sortKey": "2026-01-27", "channels": {"No Value": {"leads": 115}, "Blog": {"trafego": 587, "leads": 4, "taxa": 0.68}, "Site": {"trafego": 6367, "leads": 22, "taxa": 0.35}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 28, "dataLabel": "28/01", "sortKey": "2026-01-28", "channels": {"No Value": {"leads": 93}, "Blog": {"trafego": 663, "leads": 2, "taxa": 0.3}, "Site": {"trafego": 5598, "leads": 19, "taxa": 0.34}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 29, "dataLabel": "29/01", "sortKey": "2026-01-29", "channels": {"No Value": {"leads": 540}, "Blog": {"trafego": 603, "leads": 1, "taxa": 0.17}, "Site": {"trafego": 7357, "leads": 1, "taxa": 0.01}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 30, "dataLabel": "30/01", "sortKey": "2026-01-30", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 567, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4152, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Janeiro", "monthNum": 1, "dia": 31, "dataLabel": "31/01", "sortKey": "2026-01-31", "channels": {"No Value": {"leads": 6}, "Blog": {"trafego": 317, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1531, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 1, "dataLabel": "01/02", "sortKey": "2026-02-01", "channels": {"No Value": {"leads": 22}, "Blog": {"trafego": 328, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1479, "leads": 1, "taxa": 0.07}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 2, "dataLabel": "02/02", "sortKey": "2026-02-02", "channels": {"No Value": {"leads": 50}, "Blog": {"trafego": 574, "leads": 1, "taxa": 0.17}, "Site": {"trafego": 5020, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 13, "leads": 2, "taxa": 15.38}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 3, "dataLabel": "03/02", "sortKey": "2026-02-03", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 620, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4215, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 17, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 4, "dataLabel": "04/02", "sortKey": "2026-02-04", "channels": {"No Value": {"leads": 54}, "Blog": {"trafego": 592, "leads": 1, "taxa": 0.17}, "Site": {"trafego": 3522, "leads": 3, "taxa": 0.09}, "ChatGPT": {"trafego": 9, "leads": 1, "taxa": 11.11}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 5, "dataLabel": "05/02", "sortKey": "2026-02-05", "channels": {"No Value": {"leads": 62}, "Blog": {"trafego": 653, "leads": 2, "taxa": 0.31}, "Site": {"trafego": 3467, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 25, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 6, "dataLabel": "06/02", "sortKey": "2026-02-06", "channels": {"No Value": {"leads": 57}, "Blog": {"trafego": 602, "leads": 2, "taxa": 0.33}, "Site": {"trafego": 3248, "leads": 1, "taxa": 0.03}, "ChatGPT": {"trafego": 8, "leads": 2, "taxa": 25.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 7, "dataLabel": "07/02", "sortKey": "2026-02-07", "channels": {"No Value": {"leads": 28}, "Blog": {"trafego": 287, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1321, "leads": 1, "taxa": 0.08}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 8, "dataLabel": "08/02", "sortKey": "2026-02-08", "channels": {"No Value": {"leads": 17}, "Blog": {"trafego": 296, "leads": 3, "taxa": 1.01}, "Site": {"trafego": 1399, "leads": 1, "taxa": 0.07}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 9, "dataLabel": "09/02", "sortKey": "2026-02-09", "channels": {"No Value": {"leads": 74}, "Blog": {"trafego": 678, "leads": 5, "taxa": 0.74}, "Site": {"trafego": 4104, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 12, "leads": 1, "taxa": 8.33}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 10, "dataLabel": "10/02", "sortKey": "2026-02-10", "channels": {"No Value": {"leads": 92}, "Blog": {"trafego": 716, "leads": 6, "taxa": 0.84}, "Site": {"trafego": 4224, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 21, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 11, "dataLabel": "11/02", "sortKey": "2026-02-11", "channels": {"No Value": {"leads": 81}, "Blog": {"trafego": 688, "leads": 4, "taxa": 0.58}, "Site": {"trafego": 4295, "leads": 1, "taxa": 0.02}, "ChatGPT": {"trafego": 6, "leads": 1, "taxa": 16.67}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 12, "dataLabel": "12/02", "sortKey": "2026-02-12", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 674, "leads": 8, "taxa": 1.19}, "Site": {"trafego": 3974, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 13, "dataLabel": "13/02", "sortKey": "2026-02-13", "channels": {"No Value": {"leads": 59}, "Blog": {"trafego": 564, "leads": 2, "taxa": 0.35}, "Site": {"trafego": 3203, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 12, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 14, "dataLabel": "14/02", "sortKey": "2026-02-14", "channels": {"No Value": {"leads": 19}, "Blog": {"trafego": 220, "leads": 2, "taxa": 0.91}, "Site": {"trafego": 1331, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 1, "taxa": 25.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 15, "dataLabel": "15/02", "sortKey": "2026-02-15", "channels": {"No Value": {"leads": 25}, "Blog": {"trafego": 187, "leads": 5, "taxa": 2.67}, "Site": {"trafego": 1226, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 11, "leads": 2, "taxa": 18.18}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 16, "dataLabel": "16/02", "sortKey": "2026-02-16", "channels": {"No Value": {"leads": 37}, "Blog": {"trafego": 263, "leads": 7, "taxa": 2.66}, "Site": {"trafego": 2438, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 17, "dataLabel": "17/02", "sortKey": "2026-02-17", "channels": {"No Value": {"leads": 38}, "Blog": {"trafego": 269, "leads": 12, "taxa": 4.46}, "Site": {"trafego": 2173, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 4, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 18, "dataLabel": "18/02", "sortKey": "2026-02-18", "channels": {"No Value": {"leads": 62}, "Blog": {"trafego": 522, "leads": 15, "taxa": 2.79}, "Site": {"trafego": 3905, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 3, "taxa": 20.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 19, "dataLabel": "19/02", "sortKey": "2026-02-19", "channels": {"No Value": {"leads": 135}, "Blog": {"trafego": 693, "leads": 5, "taxa": 0.72}, "Site": {"trafego": 5766, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 19, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 20, "dataLabel": "20/02", "sortKey": "2026-02-20", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 714, "leads": 3, "taxa": 0.42}, "Site": {"trafego": 4842, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 15, "leads": 1, "taxa": 6.67}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 21, "dataLabel": "21/02", "sortKey": "2026-02-21", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 400, "leads": 3, "taxa": 0.74}, "Site": {"trafego": 1793, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 22, "dataLabel": "22/02", "sortKey": "2026-02-22", "channels": {"No Value": {"leads": 23}, "Blog": {"trafego": 395, "leads": 12, "taxa": 2.95}, "Site": {"trafego": 1897, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 3, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 23, "dataLabel": "23/02", "sortKey": "2026-02-23", "channels": {"No Value": {"leads": 174}, "Blog": {"trafego": 1020, "leads": 5, "taxa": 0.49}, "Site": {"trafego": 5991, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 14, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 24, "dataLabel": "24/02", "sortKey": "2026-02-24", "channels": {"No Value": {"leads": 65}, "Blog": {"trafego": 967, "leads": 9, "taxa": 0.92}, "Site": {"trafego": 5312, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 1, "taxa": 20.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 25, "dataLabel": "25/02", "sortKey": "2026-02-25", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 869, "leads": 3, "taxa": 0.34}, "Site": {"trafego": 4861, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 6, "leads": 2, "taxa": 33.33}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 26, "dataLabel": "26/02", "sortKey": "2026-02-26", "channels": {"No Value": {"leads": 64}, "Blog": {"trafego": 960, "leads": 1, "taxa": 0.1}, "Site": {"trafego": 4936, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 7, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 27, "dataLabel": "27/02", "sortKey": "2026-02-27", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 586, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4230, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 5, "leads": 0, "taxa": 0.0}}}, {"periodo": "Fevereiro", "monthNum": 2, "dia": 28, "dataLabel": "28/02", "sortKey": "2026-02-28", "channels": {"No Value": {"leads": 20}, "Blog": {"trafego": 304, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1592, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 1, "dataLabel": "01/03", "sortKey": "2026-03-01", "channels": {"No Value": {"leads": 16}, "Blog": {"trafego": 289, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1556, "leads": 2, "taxa": 0.13}, "ChatGPT": {"trafego": 5, "leads": 1, "taxa": 20.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 2, "dataLabel": "02/03", "sortKey": "2026-03-02", "channels": {"No Value": {"leads": 61}, "Blog": {"trafego": 683, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3850, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 13, "leads": 1, "taxa": 7.69}}}, {"periodo": "Março", "monthNum": 3, "dia": 3, "dataLabel": "03/03", "sortKey": "2026-03-03", "channels": {"No Value": {"leads": 66}, "Blog": {"trafego": 700, "leads": 1, "taxa": 0.14}, "Site": {"trafego": 4417, "leads": 13, "taxa": 0.29}, "ChatGPT": {"trafego": 13, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 4, "dataLabel": "04/03", "sortKey": "2026-03-04", "channels": {"No Value": {"leads": 67}, "Blog": {"trafego": 648, "leads": 3, "taxa": 0.46}, "Site": {"trafego": 4613, "leads": 16, "taxa": 0.35}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 5, "dataLabel": "05/03", "sortKey": "2026-03-05", "channels": {"No Value": {"leads": 70}, "Blog": {"trafego": 704, "leads": 1, "taxa": 0.14}, "Site": {"trafego": 4199, "leads": 14, "taxa": 0.33}, "ChatGPT": {"trafego": 9, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 6, "dataLabel": "06/03", "sortKey": "2026-03-06", "channels": {"No Value": {"leads": 83}, "Blog": {"trafego": 542, "leads": 1, "taxa": 0.18}, "Site": {"trafego": 4193, "leads": 0, "taxa": 0.0}, "ChatGPT": {"trafego": 8, "leads": 1, "taxa": 12.5}}}, {"periodo": "Março", "monthNum": 3, "dia": 7, "dataLabel": "07/03", "sortKey": "2026-03-07", "channels": {"No Value": {"leads": 19}, "Blog": {"trafego": 237, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1540, "leads": 4, "taxa": 0.26}, "ChatGPT": {"trafego": 13, "leads": 1, "taxa": 7.69}}}, {"periodo": "Março", "monthNum": 3, "dia": 8, "dataLabel": "08/03", "sortKey": "2026-03-08", "channels": {"No Value": {"leads": 26}, "Blog": {"trafego": 226, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1566, "leads": 5, "taxa": 0.32}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 9, "dataLabel": "09/03", "sortKey": "2026-03-09", "channels": {"No Value": {"leads": 87}, "Blog": {"trafego": 524, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4268, "leads": 10, "taxa": 0.23}, "ChatGPT": {"trafego": 10, "leads": 1, "taxa": 10.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 10, "dataLabel": "10/03", "sortKey": "2026-03-10", "channels": {"No Value": {"leads": 86}, "Blog": {"trafego": 692, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5638, "leads": 12, "taxa": 0.21}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 11, "dataLabel": "11/03", "sortKey": "2026-03-11", "channels": {"No Value": {"leads": 92}, "Blog": {"trafego": 698, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 4145, "leads": 28, "taxa": 0.68}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Março", "monthNum": 3, "dia": 12, "dataLabel": "12/03", "sortKey": "2026-03-12", "channels": {"No Value": {"leads": 89}, "Blog": {"trafego": 661, "leads": 3, "taxa": 0.45}, "Site": {"trafego": 4026, "leads": 15, "taxa": 0.37}, "ChatGPT": {"trafego": 21, "leads": 1, "taxa": 4.76}}}, {"periodo": "Março", "monthNum": 3, "dia": 13, "dataLabel": "13/03", "sortKey": "2026-03-13", "channels": {"No Value": {"leads": 52}, "Blog": {"trafego": 586, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3261, "leads": 5, "taxa": 0.15}, "ChatGPT": {"trafego": 16, "leads": 1, "taxa": 6.25}}}, {"periodo": "Março", "monthNum": 3, "dia": 14, "dataLabel": "14/03", "sortKey": "2026-03-14", "channels": {"No Value": {"leads": 41}, "Blog": {"trafego": 251, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1495, "leads": 1, "taxa": 0.07}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 15, "dataLabel": "15/03", "sortKey": "2026-03-15", "channels": {"No Value": {"leads": 26}, "Blog": {"trafego": 305, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 1774, "leads": 1, "taxa": 0.06}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 16, "dataLabel": "16/03", "sortKey": "2026-03-16", "channels": {"No Value": {"leads": 97}, "Blog": {"trafego": 548, "leads": 2, "taxa": 0.35}, "Site": {"trafego": 5222, "leads": 13, "taxa": 0.25}, "ChatGPT": {"trafego": 11, "leads": 1, "taxa": 9.09}}}, {"periodo": "Março", "monthNum": 3, "dia": 17, "dataLabel": "17/03", "sortKey": "2026-03-17", "channels": {"No Value": {"leads": 89}, "Blog": {"trafego": 512, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5585, "leads": 11, "taxa": 0.2}, "ChatGPT": {"trafego": 11, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 18, "dataLabel": "18/03", "sortKey": "2026-03-18", "channels": {"No Value": {"leads": 118}, "Blog": {"trafego": 430, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 6199, "leads": 23, "taxa": 0.37}, "ChatGPT": {"trafego": 14, "leads": 4, "taxa": 28.57}}}, {"periodo": "Março", "monthNum": 3, "dia": 19, "dataLabel": "19/03", "sortKey": "2026-03-19", "channels": {"No Value": {"leads": 149}, "Blog": {"trafego": 462, "leads": 1, "taxa": 0.21}, "Site": {"trafego": 5595, "leads": 25, "taxa": 0.45}, "ChatGPT": {"trafego": 25, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 20, "dataLabel": "20/03", "sortKey": "2026-03-20", "channels": {"No Value": {"leads": 126}, "Blog": {"trafego": 389, "leads": 1, "taxa": 0.24}, "Site": {"trafego": 5620, "leads": 28, "taxa": 0.5}, "ChatGPT": {"trafego": 15, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 21, "dataLabel": "21/03", "sortKey": "2026-03-21", "channels": {"No Value": {"leads": 31}, "Blog": {"trafego": 237, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3247, "leads": 4, "taxa": 0.12}, "ChatGPT": {"trafego": 6, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 22, "dataLabel": "22/03", "sortKey": "2026-03-22", "channels": {"No Value": {"leads": 39}, "Blog": {"trafego": 223, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 3343, "leads": 7, "taxa": 0.21}, "ChatGPT": {"trafego": 8, "leads": 0, "taxa": 0.0}}}, {"periodo": "Março", "monthNum": 3, "dia": 23, "dataLabel": "23/03", "sortKey": "2026-03-23", "channels": {"No Value": {"leads": 187}, "Blog": {"trafego": 510, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 10448, "leads": 58, "taxa": 0.56}, "ChatGPT": {"trafego": 17, "leads": 2, "taxa": 11.76}}}, {"periodo": "Março", "monthNum": 3, "dia": 24, "dataLabel": "24/03", "sortKey": "2026-03-24", "channels": {"No Value": {"leads": 334}, "Blog": {"trafego": 609, "leads": 1, "taxa": 0.16}, "Site": {"trafego": 9580, "leads": 59, "taxa": 0.62}, "ChatGPT": {"trafego": 23, "leads": 2, "taxa": 8.7}}}, {"periodo": "Março", "monthNum": 3, "dia": 25, "dataLabel": "25/03", "sortKey": "2026-03-25", "channels": {"No Value": {"leads": 165}, "Blog": {"trafego": 491, "leads": 0, "taxa": 0.0}, "Site": {"trafego": 5693, "leads": 9, "taxa": 0.16}, "ChatGPT": {"trafego": 10, "leads": 0, "taxa": 0.0}}}];
 const periods = [
   { key: "3 meses", label: "3 meses" },
   { key: "Janeiro", label: "Janeiro" },
@@ -362,86 +280,95 @@ const channels = [
   { key: "Site", label: "Site", color: "#16a34a" },
   { key: "ChatGPT", label: "ChatGPT", color: "#7c3aed" }
 ];
-const annotations = [
-  {
-    key: "migracao-blog",
-    type: "line",
-    dateKey: "2026-02-22",
-    shortLabel: "22/02 - Migração do blog",
-    label: "Migração do Blog",
-    color: "#0f766e",
-    fill: "#f0fdfa",
-    text: "#115e59"
-  },
-  {
-    key: "home",
-    type: "line",
-    dateKey: "2026-03-09",
-    shortLabel: "09/03 - Home page",
-    label: "Mudança da home page do site",
-    color: "#2563eb",
-    fill: "#eff6ff",
-    text: "#1d4ed8"
-  },
-  {
-    key: "cta",
-    type: "range",
-    startKey: "2026-03-11",
-    endKey: "2026-03-19",
-    shortLabel: "11/03-19/03 - CTA's",
-    label: "Inserção de 20 CTA's posts mais acessados",
-    color: "#d97706",
-    fill: "#fffbeb",
-    text: "#92400e"
-  },
-  {
-    key: "banners",
-    type: "line",
-    dateKey: "2026-03-19",
-    shortLabel: "19/03 - Banners fixos",
-    label: "Mudança dos 3 banners fixos (blog e site)",
-    color: "#dc2626",
-    fill: "#fef2f2",
-    text: "#b91c1c"
-  }
+const generalAnnotations = [
+  { key: "migracao", type: "line", dateKey: "2026-02-22", shortLabel: "22/02 - Migração", label: "Migração do Blog", color: "#7c3aed", fill: "#f5f3ff", text: "#6d28d9" },
+  { key: "home", type: "line", dateKey: "2026-03-09", shortLabel: "09/03 - Home page", label: "Mudança da home page do site", color: "#2563eb", fill: "#eff6ff", text: "#1d4ed8" },
+  { key: "cta", type: "range", startKey: "2026-03-11", endKey: "2026-03-19", shortLabel: "11/03-19/03 - CTA's", label: "Inserção de 20 CTA's posts mais acessados", color: "#d97706", fill: "#fffbeb", text: "#92400e" },
+  { key: "banners", type: "line", dateKey: "2026-03-19", shortLabel: "19/03 - Banners fixos", label: "Mudança dos 3 banners fixos (blog e site)", color: "#dc2626", fill: "#fef2f2", text: "#b91c1c" }
 ];
+const migrationDate = "2026-02-22";
+const migrationWindow = {
+  fullStart: "2026-02-01",
+  fullEnd: "2026-03-15",
+  preStart: "2026-02-01",
+  preEnd: "2026-02-22",
+  postStart: "2026-02-22",
+  postEnd: "2026-03-15"
+};
 
 const state = {
-  period: "3 meses",
-  metric: "leads",
-  channels: new Set(channels.map(c => c.key)),
-  flags: new Set(annotations.map(a => a.key))
+  tab: "geral",
+  general: {
+    period: "3 meses",
+    metric: "leads",
+    channels: new Set(channels.map(c => c.key)),
+    flags: new Set(generalAnnotations.map(a => a.key))
+  },
+  migration: {
+    metric: "leads",
+    channels: new Set(channels.map(c => c.key))
+  }
 };
 
 const els = {
-  periodControls: document.getElementById("periodControls"),
-  metricControls: document.getElementById("metricControls"),
-  channelControls: document.getElementById("channelControls"),
-  flagControls: document.getElementById("flagControls"),
-  selectAllChannelsBtn: document.getElementById("selectAllChannelsBtn"),
-  clearChannelsBtn: document.getElementById("clearChannelsBtn"),
-  allFlagsBtn: document.getElementById("allFlagsBtn"),
-  clearFlagsBtn: document.getElementById("clearFlagsBtn"),
-  statusNote: document.getElementById("statusNote"),
-  chartTitle: document.getElementById("chartTitle"),
-  chartMeta: document.getElementById("chartMeta"),
-  legend: document.getElementById("legend"),
-  chartSvg: document.getElementById("chartSvg"),
-  tooltip: document.getElementById("tooltip"),
-  emptyState: document.getElementById("emptyState")
+  tabs: document.querySelectorAll(".tab-btn"),
+  sections: {
+    geral: document.getElementById("tab-geral"),
+    migracao: document.getElementById("tab-migracao")
+  },
+  general: {
+    periodControls: document.getElementById("generalPeriodControls"),
+    metricControls: document.getElementById("generalMetricControls"),
+    channelControls: document.getElementById("generalChannelControls"),
+    flagControls: document.getElementById("generalFlagControls"),
+    selectAllChannelsBtn: document.getElementById("generalSelectAllChannelsBtn"),
+    clearChannelsBtn: document.getElementById("generalClearChannelsBtn"),
+    allFlagsBtn: document.getElementById("generalAllFlagsBtn"),
+    clearFlagsBtn: document.getElementById("generalClearFlagsBtn"),
+    statusNote: document.getElementById("generalStatusNote"),
+    chartTitle: document.getElementById("generalChartTitle"),
+    chartMeta: document.getElementById("generalChartMeta"),
+    legend: document.getElementById("generalLegend"),
+    chartSvg: document.getElementById("generalChartSvg"),
+    tooltip: document.getElementById("generalTooltip"),
+    emptyState: document.getElementById("generalEmptyState"),
+    summary: document.getElementById("generalSummary"),
+    channelSummary: document.getElementById("generalChannelSummary")
+  },
+  migration: {
+    metricControls: document.getElementById("migrationMetricControls"),
+    channelControls: document.getElementById("migrationChannelControls"),
+    selectAllChannelsBtn: document.getElementById("migrationSelectAllChannelsBtn"),
+    clearChannelsBtn: document.getElementById("migrationClearChannelsBtn"),
+    statusNote: document.getElementById("migrationStatusNote"),
+    summary: document.getElementById("migrationSummary"),
+    legend: document.getElementById("migrationLegend"),
+    overlayLegend: document.getElementById("overlayLegend"),
+    timelineSvg: document.getElementById("migrationTimelineSvg"),
+    timelineTooltip: document.getElementById("migrationTimelineTooltip"),
+    timelineEmpty: document.getElementById("migrationTimelineEmpty"),
+    overlaySvg: document.getElementById("migrationOverlaySvg"),
+    overlayTooltip: document.getElementById("migrationOverlayTooltip"),
+    overlayEmpty: document.getElementById("migrationOverlayEmpty")
+  }
 };
 
 const ns = "http://www.w3.org/2000/svg";
-function byPeriod(period) {
-  const data = period === "3 meses" ? rawData.slice() : rawData.filter(d => d.periodo === period);
-  return data.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
-}
 
 function metricLabel(key) {
   return metrics.find(m => m.key === key)?.label || key;
 }
-
-function append(tag, attrs = {}, parent = els.chartSvg) {
+function channelColor(key) {
+  return channels.find(c => c.key === key)?.color || "#64748b";
+}
+function byPeriod(period) {
+  const data = period === "3 meses" ? rawData.slice() : rawData.filter(d => d.periodo === period);
+  return data.sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+}
+function rangeData(startKey, endKey) {
+  return rawData.filter(d => d.sortKey >= startKey && d.sortKey <= endKey).sort((a,b) => a.sortKey.localeCompare(b.sortKey));
+}
+function append(tag, attrs = {}, parent) {
   const el = document.createElementNS(ns, tag);
   Object.entries(attrs).forEach(([k, v]) => {
     if (v !== null && v !== undefined) el.setAttribute(k, String(v));
@@ -449,7 +376,6 @@ function append(tag, attrs = {}, parent = els.chartSvg) {
   parent.appendChild(el);
   return el;
 }
-
 function wrapText(text, maxChars) {
   const words = text.split(" ");
   const lines = [];
@@ -466,118 +392,52 @@ function wrapText(text, maxChars) {
   if (line) lines.push(line);
   return lines;
 }
-
 function formatNumber(value) {
-  return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 }).format(value || 0);
 }
-
 function formatMetricValue(metric, value) {
   if (value == null || Number.isNaN(value)) return "sem dado";
-  if (metric === "taxa") return value.toFixed(2).replace(".", ",") + "%";
+  if (metric === "taxa") return Number(value).toFixed(2).replace(".", ",") + "%";
   return formatNumber(value);
 }
-
-function setStatus(html, tone = "info") {
-  els.statusNote.innerHTML = html;
-  els.statusNote.style.borderLeftColor = tone === "warn" ? "#d97706" : tone === "danger" ? "#dc2626" : "#2563eb";
-  els.statusNote.style.background = tone === "warn" ? "#fff7ed" : tone === "danger" ? "#fef2f2" : "#f8fbff";
-  els.statusNote.style.color = tone === "warn" ? "#9a3412" : tone === "danger" ? "#991b1b" : "#1e3a8a";
+function aggregateForRows(rows, channelKeys) {
+  let trafego = 0, leads = 0;
+  channelKeys.forEach(ch => {
+    rows.forEach(r => {
+      const c = r.channels[ch] || {};
+      trafego += Number(c.trafego || 0);
+      leads += Number(c.leads || 0);
+    });
+  });
+  const taxa = trafego > 0 ? (leads / trafego) * 100 : null;
+  return { trafego, leads, taxa };
 }
-
-function buildControls() {
-  periods.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className = "seg-btn";
-    btn.textContent = item.label;
-    btn.addEventListener("click", () => {
-      state.period = item.key;
-      refresh();
-    });
-    els.periodControls.appendChild(btn);
-  });
-
-  metrics.forEach(item => {
-    const btn = document.createElement("button");
-    btn.className = "seg-btn";
-    btn.textContent = item.label;
-    btn.addEventListener("click", () => {
-      state.metric = item.key;
-      refresh();
-    });
-    els.metricControls.appendChild(btn);
-  });
-
-  channels.forEach(ch => {
-    const label = document.createElement("label");
-    label.className = "check-chip";
-    label.innerHTML = `<input type="checkbox" checked><span class="dot" style="background:${ch.color}"></span><span>${ch.label}</span>`;
-    label.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (state.channels.has(ch.key)) state.channels.delete(ch.key);
-      else state.channels.add(ch.key);
-      refresh();
-    });
-    els.channelControls.appendChild(label);
-  });
-
-  annotations.forEach(flag => {
-    const label = document.createElement("label");
-    label.className = "check-chip";
-    label.innerHTML = `<input type="checkbox" checked><span class="flag-dot" style="background:${flag.color}"></span><span>${flag.shortLabel}</span>`;
-    label.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (state.flags.has(flag.key)) state.flags.delete(flag.key);
-      else state.flags.add(flag.key);
-      refresh();
-    });
-    els.flagControls.appendChild(label);
-  });
-
-  els.selectAllChannelsBtn.addEventListener("click", () => {
-    channels.forEach(c => state.channels.add(c.key));
-    refresh();
-  });
-  els.clearChannelsBtn.addEventListener("click", () => {
-    state.channels.clear();
-    refresh();
-  });
-  els.allFlagsBtn.addEventListener("click", () => {
-    annotations.forEach(a => state.flags.add(a.key));
-    refresh();
-  });
-  els.clearFlagsBtn.addEventListener("click", () => {
-    state.flags.clear();
-    refresh();
+function aggregateForChannel(rows, channelKey) {
+  return aggregateForRows(rows, [channelKey]);
+}
+function setStatus(el, html, tone="info") {
+  el.innerHTML = html;
+  el.style.borderLeftColor = tone === "warn" ? "#d97706" : tone === "danger" ? "#dc2626" : "#2563eb";
+  el.style.background = tone === "warn" ? "#fff7ed" : tone === "danger" ? "#fef2f2" : "#f8fbff";
+  el.style.color = tone === "warn" ? "#9a3412" : tone === "danger" ? "#991b1b" : "#1e3a8a";
+}
+function renderLegend(el, items, options = {}) {
+  el.innerHTML = "";
+  items.forEach(item => {
+    const button = document.createElement(item.onToggle ? "button" : "div");
+    button.className = "legend-item";
+    if (item.onToggle) button.type = "button";
+    const isActive = item.active !== false;
+    button.innerHTML = `<span class="dot" style="background:${item.color}; border:2px dashed ${item.color}; ${item.dashed ? "background:transparent;" : ""}"></span><span>${item.label}</span>`;
+    button.style.opacity = isActive ? "1" : ".5";
+    button.style.cursor = item.onToggle ? "pointer" : "default";
+    if (item.onToggle) {
+      button.title = "Clique para mostrar ou ocultar este canal";
+      button.addEventListener("click", item.onToggle);
+    }
+    el.appendChild(button);
   });
 }
-
-function syncControls() {
-  [...els.periodControls.children].forEach((btn, i) => btn.classList.toggle("active", periods[i].key === state.period));
-  [...els.metricControls.children].forEach((btn, i) => btn.classList.toggle("active", metrics[i].key === state.metric));
-  [...els.channelControls.children].forEach((chip, i) => {
-    const active = state.channels.has(channels[i].key);
-    chip.classList.toggle("active", active);
-    chip.querySelector("input").checked = active;
-    chip.style.opacity = active ? "1" : ".56";
-  });
-  [...els.flagControls.children].forEach((chip, i) => {
-    const active = state.flags.has(annotations[i].key);
-    chip.classList.toggle("active", active);
-    chip.querySelector("input").checked = active;
-    chip.style.opacity = active ? "1" : ".56";
-  });
-}
-
-function renderLegend(series) {
-  els.legend.innerHTML = "";
-  series.forEach(s => {
-    const item = document.createElement("div");
-    item.className = "legend-item";
-    item.innerHTML = `<span class="dot" style="background:${s.color}"></span><span>${s.channel}</span>`;
-    els.legend.appendChild(item);
-  });
-}
-
 function linePath(points, xScale, yScale) {
   let d = "";
   points.forEach((p, idx) => {
@@ -585,193 +445,222 @@ function linePath(points, xScale, yScale) {
   });
   return d.trim();
 }
+function buildControls() {
+  // tabs
+  els.tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.tab = btn.dataset.tab;
+      els.tabs.forEach(b => b.classList.toggle("active", b === btn));
+      Object.entries(els.sections).forEach(([k, section]) => section.classList.toggle("active", k === state.tab));
+    });
+  });
 
-function refresh() {
-  syncControls();
-  renderChart();
-}
+  periods.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "seg-btn";
+    btn.textContent = item.label;
+    btn.addEventListener("click", () => {
+      state.general.period = item.key;
+      refreshGeneral();
+    });
+    els.general.periodControls.appendChild(btn);
+  });
 
-function renderChart() {
-  const periodData = byPeriod(state.period);
-  const selectedChannels = channels.filter(c => state.channels.has(c.key)).map(c => c.key);
-  const enabledFlags = annotations.filter(a => state.flags.has(a.key));
+  metrics.forEach(item => {
+    const btn1 = document.createElement("button");
+    btn1.className = "seg-btn";
+    btn1.textContent = item.label;
+    btn1.addEventListener("click", () => {
+      state.general.metric = item.key;
+      refreshGeneral();
+    });
+    els.general.metricControls.appendChild(btn1);
 
-  els.chartTitle.textContent = `${metricLabel(state.metric)} - ${state.period}`;
-  els.chartMeta.textContent = state.period === "3 meses"
-    ? "Comparativo diário consolidando Janeiro, Fevereiro e Março."
-    : `Comparativo diário dos canais em ${state.period}.`;
+    const btn2 = document.createElement("button");
+    btn2.className = "seg-btn";
+    btn2.textContent = item.label;
+    btn2.addEventListener("click", () => {
+      state.migration.metric = item.key;
+      refreshMigration();
+    });
+    els.migration.metricControls.appendChild(btn2);
+  });
 
-  const series = selectedChannels.map(channel => {
-    const points = periodData.map((d, index) => {
-      const value = d.channels[channel]?.[state.metric];
-      return {
-        index,
-        label: d.dataLabel,
-        periodo: d.periodo,
-        y: value == null ? null : Number(value)
-      };
-    }).filter(p => p.y != null && !Number.isNaN(p.y));
-    return {
-      channel,
-      color: channels.find(c => c.key === channel).color,
-      points
+  channels.forEach(ch => {
+    const mkChip = (container, setObj, refreshFn) => {
+      const label = document.createElement("label");
+      label.className = "check-chip";
+      label.innerHTML = `<input type="checkbox" checked><span class="dot" style="background:${ch.color}"></span><span>${ch.label}</span>`;
+      label.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (setObj.has(ch.key)) setObj.delete(ch.key);
+        else setObj.add(ch.key);
+        refreshFn();
+      });
+      container.appendChild(label);
     };
-  }).filter(s => s.points.length);
+    mkChip(els.general.channelControls, state.general.channels, refreshGeneral);
+    mkChip(els.migration.channelControls, state.migration.channels, refreshMigration);
+  });
 
-  const unavailable = selectedChannels.filter(ch => !series.some(s => s.channel === ch));
-  const notes = [];
-  if (!selectedChannels.length) notes.push("Nenhum canal selecionado.");
-  if (unavailable.length) notes.push(`Sem dados para <strong>${unavailable.join(", ")}</strong> na métrica <strong>${metricLabel(state.metric)}</strong>.`);
-  if (state.metric !== "leads" && selectedChannels.includes("No Value")) notes.push("O canal <strong>No Value</strong> tem apenas <strong>Leads</strong> nos arquivos recebidos.");
-  if (!enabledFlags.length) notes.push("Todas as flags estão ocultas.");
-  if (notes.length) setStatus(notes.join(" "), unavailable.length ? "warn" : "info");
-  else setStatus("Visualização pronta. Os filtros estão no topo e cada flag pode ser ligada ou desligada individualmente.", "info");
+  generalAnnotations.forEach(flag => {
+    const label = document.createElement("label");
+    label.className = "check-chip";
+    label.innerHTML = `<input type="checkbox" checked><span class="flag-dot" style="background:${flag.color}"></span><span>${flag.shortLabel}</span>`;
+    label.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (state.general.flags.has(flag.key)) state.general.flags.delete(flag.key);
+      else state.general.flags.add(flag.key);
+      refreshGeneral();
+    });
+    els.general.flagControls.appendChild(label);
+  });
 
-  renderLegend(series);
-  const svg = els.chartSvg;
+  els.general.selectAllChannelsBtn.addEventListener("click", () => { channels.forEach(c => state.general.channels.add(c.key)); refreshGeneral(); });
+  els.general.clearChannelsBtn.addEventListener("click", () => { state.general.channels.clear(); refreshGeneral(); });
+  els.general.allFlagsBtn.addEventListener("click", () => { generalAnnotations.forEach(a => state.general.flags.add(a.key)); refreshGeneral(); });
+  els.general.clearFlagsBtn.addEventListener("click", () => { state.general.flags.clear(); refreshGeneral(); });
+  els.migration.selectAllChannelsBtn.addEventListener("click", () => { channels.forEach(c => state.migration.channels.add(c.key)); refreshMigration(); });
+  els.migration.clearChannelsBtn.addEventListener("click", () => { state.migration.channels.clear(); refreshMigration(); });
+}
+function syncControls() {
+  [...els.general.periodControls.children].forEach((btn, i) => btn.classList.toggle("active", periods[i].key === state.general.period));
+  [...els.general.metricControls.children].forEach((btn, i) => btn.classList.toggle("active", metrics[i].key === state.general.metric));
+  [...els.migration.metricControls.children].forEach((btn, i) => btn.classList.toggle("active", metrics[i].key === state.migration.metric));
+
+  [...els.general.channelControls.children].forEach((chip, i) => {
+    const active = state.general.channels.has(channels[i].key);
+    chip.classList.toggle("active", active);
+    chip.style.opacity = active ? "1" : ".56";
+    chip.querySelector("input").checked = active;
+  });
+  [...els.migration.channelControls.children].forEach((chip, i) => {
+    const active = state.migration.channels.has(channels[i].key);
+    chip.classList.toggle("active", active);
+    chip.style.opacity = active ? "1" : ".56";
+    chip.querySelector("input").checked = active;
+  });
+  [...els.general.flagControls.children].forEach((chip, i) => {
+    const active = state.general.flags.has(generalAnnotations[i].key);
+    chip.classList.toggle("active", active);
+    chip.style.opacity = active ? "1" : ".56";
+    chip.querySelector("input").checked = active;
+  });
+}
+function renderSummaryCards(container, cards) {
+  container.innerHTML = "";
+  cards.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "summary-card card";
+    div.innerHTML = `
+      <div class="summary-label">${card.label}</div>
+      <div class="summary-value">${card.value}</div>
+      <div class="summary-sub">${card.sub}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+function renderChannelCards(container, rows, channelKeys) {
+  container.innerHTML = "";
+  channelKeys.forEach(key => {
+    const agg = aggregateForChannel(rows, key);
+    const div = document.createElement("div");
+    div.className = "small-card card";
+    div.innerHTML = `
+      <div class="small-title"><span class="dot" style="background:${channelColor(key)}"></span><span>${key}</span></div>
+      <div class="metric-row"><span>Tráfego</span><strong>${formatNumber(agg.trafego)}</strong></div>
+      <div class="metric-row"><span>Leads</span><strong>${formatNumber(agg.leads)}</strong></div>
+      <div class="metric-row"><span>Tx de conversão</span><strong>${agg.taxa == null ? "sem dado" : formatMetricValue("taxa", agg.taxa)}</strong></div>
+    `;
+    container.appendChild(div);
+  });
+}
+function renderLineChart(config) {
+  const svg = config.svg;
+  const tooltip = config.tooltip;
+  const empty = config.empty;
   svg.innerHTML = "";
+  tooltip.classList.remove("visible");
 
-  if (!periodData.length || !series.length) {
-    els.emptyState.classList.add("visible");
-    els.emptyState.innerHTML = !periodData.length
-      ? "<div><strong>Sem dados para o período selecionado.</strong></div>"
-      : "<div><strong>Nada para desenhar.</strong><br/>Selecione pelo menos um canal com dados.</div>";
-    els.tooltip.classList.remove("visible");
-    return;
-  }
-  els.emptyState.classList.remove("visible");
-
-  const width = 1280;
-  const height = 690;
-  const topBand = enabledFlags.length ? Math.max(95, 26 + enabledFlags.length * 46) : 40;
-  const margin = { top: topBand, right: 24, bottom: 72, left: 84 };
+  const width = 1280, height = 690;
+  const flagRows = (config.annotations || []).length;
+  const topBand = config.topBand || (flagRows ? Math.max(92, 24 + flagRows * 44) : 40);
+  const margin = { top: topBand, right: 24, bottom: 76, left: 84 };
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
 
-  append("rect", { x:0, y:0, width, height, fill:"#ffffff" });
+  if (!config.xLabels.length || !config.series.length) {
+    empty.classList.add("visible");
+    empty.innerHTML = "<div><strong>Nada para desenhar.</strong><br>Selecione pelo menos um canal com dados.</div>";
+    return;
+  }
+  empty.classList.remove("visible");
+  append("rect", { x:0, y:0, width, height, fill:"#ffffff" }, svg);
 
-  const allPoints = series.flatMap(s => s.points);
-  const xMaxIndex = periodData.length - 1;
-  const rawMax = Math.max(...allPoints.map(p => p.y));
-  const yMax = rawMax <= 0 ? 1 : rawMax * 1.12;
+  const allPoints = config.series.flatMap(s => s.points);
+  const yMaxRaw = Math.max(...allPoints.map(p => p.y));
+  const yMax = yMaxRaw <= 0 ? 1 : yMaxRaw * 1.12;
   const yMin = 0;
+  const xMaxIndex = Math.max(0, config.xLabels.length - 1);
   const xScale = i => margin.left + (plotWidth * (xMaxIndex === 0 ? 0 : i / xMaxIndex));
   const yScale = v => margin.top + plotHeight - ((v - yMin) / Math.max(1, yMax - yMin)) * plotHeight;
 
-  // grid
-  const ticks = 5;
-  for (let i = 0; i <= ticks; i++) {
-    const v = yMin + (i / ticks) * (yMax - yMin);
+  for (let i=0; i<=5; i++) {
+    const v = yMin + (i/5) * (yMax - yMin);
     const y = yScale(v);
-    append("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, stroke: "#e8edf5", "stroke-width": 1 });
-    const t = append("text", {
-      x: margin.left - 12, y: y + 4, fill: "#64748b", "font-size": 12, "text-anchor": "end"
-    });
-    t.textContent = state.metric === "taxa" ? v.toFixed(2).replace(".", ",") + "%" : formatNumber(v);
+    append("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, stroke:"#e8edf5", "stroke-width":1 }, svg);
+    const t = append("text", { x: margin.left - 12, y: y + 4, fill:"#64748b", "font-size":12, "text-anchor":"end" }, svg);
+    t.textContent = config.metric === "taxa" ? v.toFixed(2).replace(".", ",") + "%" : formatNumber(v);
   }
 
-  // month separators
-  if (state.period === "3 meses") {
-    const firstIndexes = [];
-    periodData.forEach((d, i) => {
-      if (i === 0 || d.periodo !== periodData[i-1].periodo) firstIndexes.push(i);
-    });
-    firstIndexes.forEach((idx, pos) => {
-      const label = periodData[idx].periodo;
-      const nextIdx = firstIndexes[pos + 1] ?? periodData.length;
-      const startX = xScale(idx);
-      const endX = xScale(nextIdx - 1);
-      if (idx !== 0) {
-        append("line", {
-          x1: startX - ((startX - xScale(idx-1))/2),
-          y1: margin.top,
-          x2: startX - ((startX - xScale(idx-1))/2),
-          y2: margin.top + plotHeight,
-          stroke: "#cbd5e1",
-          "stroke-width": 1.2,
-          "stroke-dasharray": "5 6"
-        });
+  if (config.segmentBreaks) {
+    config.segmentBreaks.forEach(seg => {
+      if (seg.index > 0) {
+        const x = xScale(seg.index) - ((xScale(seg.index) - xScale(seg.index - 1))/2);
+        append("line", { x1:x, y1:margin.top, x2:x, y2:margin.top + plotHeight, stroke:"#cbd5e1", "stroke-width":1.2, "stroke-dasharray":"5 6" }, svg);
       }
-      const tx = append("text", {
-        x: (startX + endX) / 2, y: margin.top - 10, fill: "#475569", "font-size": 13, "font-weight": 800, "text-anchor": "middle"
-      });
-      tx.textContent = label;
+      const tx = append("text", { x:(xScale(seg.start) + xScale(seg.end))/2, y:margin.top - 10, fill:"#475569", "font-size":13, "font-weight":800, "text-anchor":"middle" }, svg);
+      tx.textContent = seg.label;
     });
   }
 
-  // range annotations behind lines
-  enabledFlags.filter(a => a.type === "range").forEach((a, flagIdx) => {
-    const startIndex = periodData.findIndex(d => d.sortKey === a.startKey);
-    const endIndex = periodData.findIndex(d => d.sortKey === a.endKey);
+  (config.annotations || []).filter(a => a.type === "range").forEach(a => {
+    const startIndex = config.xLabels.findIndex(d => d.key === a.startKey);
+    const endIndex = config.xLabels.findIndex(d => d.key === a.endKey);
     if (startIndex === -1 || endIndex === -1) return;
-    const x1 = xScale(startIndex);
-    const x2 = xScale(endIndex);
+    const x1 = xScale(startIndex), x2 = xScale(endIndex);
     append("rect", {
-      x: x1, y: margin.top,
-      width: Math.max(8, x2 - x1), height: plotHeight,
-      fill: a.fill, stroke: a.color, "stroke-dasharray": "5 5", "fill-opacity": .85, "stroke-opacity": .7
-    });
+      x: x1, y: margin.top, width: Math.max(8, x2 - x1), height: plotHeight,
+      fill: a.fill, stroke: a.color, "stroke-dasharray":"5 5", "fill-opacity":.85, "stroke-opacity":.7
+    }, svg);
   });
 
-  // axes
-  append("line", { x1: margin.left, y1: margin.top + plotHeight, x2: width - margin.right, y2: margin.top + plotHeight, stroke: "#94a3b8", "stroke-width": 1.4 });
-  append("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: margin.top + plotHeight, stroke: "#94a3b8", "stroke-width": 1.4 });
+  append("line", { x1: margin.left, y1: margin.top + plotHeight, x2: width - margin.right, y2: margin.top + plotHeight, stroke:"#94a3b8", "stroke-width":1.4 }, svg);
+  append("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: margin.top + plotHeight, stroke:"#94a3b8", "stroke-width":1.4 }, svg);
 
-  // x ticks
-  const tickStep = periodData.length > 62 ? 6 : periodData.length > 45 ? 4 : periodData.length > 20 ? 2 : 1;
-  periodData.forEach((d, idx) => {
-    if (idx % tickStep !== 0 && idx !== periodData.length - 1) return;
+  const tickStep = config.xLabels.length > 62 ? 6 : config.xLabels.length > 45 ? 4 : config.xLabels.length > 20 ? 2 : 1;
+  config.xLabels.forEach((labelObj, idx) => {
+    if (idx % tickStep !== 0 && idx !== config.xLabels.length - 1) return;
     const x = xScale(idx);
-    append("line", { x1: x, y1: margin.top + plotHeight, x2: x, y2: margin.top + plotHeight + 6, stroke: "#94a3b8" });
-    const t = append("text", { x, y: margin.top + plotHeight + 22, fill: "#64748b", "font-size": 12, "text-anchor": "middle" });
-    t.textContent = d.dataLabel;
+    append("line", { x1:x, y1:margin.top + plotHeight, x2:x, y2:margin.top + plotHeight + 6, stroke:"#94a3b8" }, svg);
+    const t = append("text", { x, y:margin.top + plotHeight + 22, fill:"#64748b", "font-size":12, "text-anchor":"middle" }, svg);
+    t.textContent = labelObj.label;
   });
 
-  // line annotations + top labels
-  enabledFlags.forEach((a, i) => {
+  (config.annotations || []).forEach((a, i) => {
     const boxY = 14 + i * 44;
     if (a.type === "line") {
-      const index = periodData.findIndex(d => d.sortKey === a.dateKey);
+      const index = config.xLabels.findIndex(d => d.key === a.dateKey);
       if (index === -1) return;
       const x = xScale(index);
-      append("line", {
-        x1: x, y1: margin.top, x2: x, y2: margin.top + plotHeight,
-        stroke: a.color, "stroke-width": 1.8, "stroke-dasharray": "7 5"
-      });
-      append("line", {
-        x1: x, y1: boxY + 28, x2: x, y2: margin.top - 4,
-        stroke: a.color, "stroke-width": 1.2, "stroke-dasharray": "4 5", "stroke-opacity": .8
-      });
+      append("line", { x1:x, y1:margin.top, x2:x, y2:margin.top + plotHeight, stroke:a.color, "stroke-width":1.8, "stroke-dasharray":"7 5" }, svg);
+      append("line", { x1:x, y1:boxY + 28, x2:x, y2:margin.top - 4, stroke:a.color, "stroke-width":1.2, "stroke-dasharray":"4 5", "stroke-opacity":.8 }, svg);
       const lines = wrapText(a.label, 28);
       const boxWidth = Math.min(230, Math.max(150, lines.reduce((m, line) => Math.max(m, line.length), 0) * 6.4 + 26));
       const boxHeight = 28 + (lines.length - 1) * 14;
       const boxX = Math.max(10, Math.min(x - boxWidth / 2, width - boxWidth - 10));
-      append("rect", { x: boxX, y: boxY, width: boxWidth, height: boxHeight, rx: 10, ry: 10, fill: a.fill, stroke: a.color });
-      const tx = append("text", { x: boxX + 12, y: boxY + 17, fill: a.text, "font-size": 12, "font-weight": 700 });
-      lines.forEach((line, lineIdx) => {
-        const span = document.createElementNS(ns, "tspan");
-        span.setAttribute("x", boxX + 12);
-        span.setAttribute("dy", lineIdx === 0 ? 0 : 14);
-        span.textContent = line;
-        tx.appendChild(span);
-      });
-    } else if (a.type === "range") {
-      const startIndex = periodData.findIndex(d => d.sortKey === a.startKey);
-      const endIndex = periodData.findIndex(d => d.sortKey === a.endKey);
-      if (startIndex === -1 || endIndex === -1) return;
-      const x1 = xScale(startIndex);
-      const x2 = xScale(endIndex);
-      const center = (x1 + x2) / 2;
-      const lines = wrapText(a.label, 32);
-      const boxWidth = Math.min(260, Math.max(170, lines.reduce((m, line) => Math.max(m, line.length), 0) * 6.2 + 26));
-      const boxHeight = 28 + (lines.length - 1) * 14;
-      const boxX = Math.max(10, Math.min(center - boxWidth / 2, width - boxWidth - 10));
-      append("line", {
-        x1: center, y1: boxY + 28, x2: center, y2: margin.top - 4,
-        stroke: a.color, "stroke-width": 1.2, "stroke-dasharray": "4 5", "stroke-opacity": .8
-      });
-      append("rect", { x: boxX, y: boxY, width: boxWidth, height: boxHeight, rx: 10, ry: 10, fill: a.fill, stroke: a.color });
-      const tx = append("text", { x: boxX + 12, y: boxY + 17, fill: a.text, "font-size": 12, "font-weight": 700 });
+      append("rect", { x:boxX, y:boxY, width:boxWidth, height:boxHeight, rx:10, ry:10, fill:a.fill, stroke:a.color }, svg);
+      const tx = append("text", { x:boxX + 12, y:boxY + 17, fill:a.text, "font-size":12, "font-weight":700 }, svg);
       lines.forEach((line, lineIdx) => {
         const span = document.createElementNS(ns, "tspan");
         span.setAttribute("x", boxX + 12);
@@ -782,42 +671,207 @@ function renderChart() {
     }
   });
 
-  // data series
-  series.forEach(s => {
+  config.series.forEach(s => {
     append("path", {
       d: linePath(s.points, xScale, yScale),
-      fill: "none",
-      stroke: s.color,
-      "stroke-width": 3,
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round"
-    });
+      fill: "none", stroke: s.color, "stroke-width": s.dashed ? 2.8 : 3.2,
+      "stroke-linecap":"round", "stroke-linejoin":"round",
+      "stroke-dasharray": s.dashed ? "8 6" : null
+    }, svg);
+
     s.points.forEach(p => {
-      const cx = xScale(p.index);
-      const cy = yScale(p.y);
-      append("circle", {
-        cx, cy, r: 4.2, fill: s.color, stroke: "#fff", "stroke-width": 2,
-        "data-channel": s.channel, "data-label": p.label, "data-period": p.periodo, "data-value": p.y
-      });
-      const hover = append("circle", {
-        cx, cy, r: 10, fill: "transparent", "data-channel": s.channel, "data-label": p.label, "data-period": p.periodo, "data-value": p.y
-      });
+      const cx = xScale(p.index), cy = yScale(p.y);
+      append("circle", { cx, cy, r:4.2, fill:s.color, stroke:"#fff", "stroke-width":2, opacity:s.dashed ? .95 : 1 }, svg);
+      const hover = append("circle", { cx, cy, r:10, fill:"transparent" }, svg);
       hover.addEventListener("mouseenter", evt => {
-        els.tooltip.innerHTML = `<strong>${s.channel}</strong><br>${p.label} - ${p.periodo}<br>${metricLabel(state.metric)}: <strong>${formatMetricValue(state.metric, p.y)}</strong>`;
-        els.tooltip.classList.add("visible");
+        tooltip.innerHTML = config.tooltipFormatter(p, s);
+        tooltip.classList.add("visible");
       });
       hover.addEventListener("mousemove", evt => {
-        const rect = els.chartSvg.getBoundingClientRect();
-        els.tooltip.style.left = (evt.clientX - rect.left) + "px";
-        els.tooltip.style.top = (evt.clientY - rect.top) + "px";
+        const rect = svg.getBoundingClientRect();
+        tooltip.style.left = (evt.clientX - rect.left) + "px";
+        tooltip.style.top = (evt.clientY - rect.top) + "px";
       });
-      hover.addEventListener("mouseleave", () => els.tooltip.classList.remove("visible"));
+      hover.addEventListener("mouseleave", () => tooltip.classList.remove("visible"));
     });
   });
 }
+function refreshGeneral() {
+  syncControls();
+  const rows = byPeriod(state.general.period);
+  const selectedChannels = channels.filter(c => state.general.channels.has(c.key)).map(c => c.key);
+  const enabledFlags = generalAnnotations.filter(a => state.general.flags.has(a.key));
+  const overall = aggregateForRows(rows, selectedChannels);
+
+  const periodLabel = state.general.period;
+  els.general.chartTitle.textContent = `${metricLabel(state.general.metric)} - ${periodLabel}`;
+  els.general.chartMeta.textContent = state.general.period === "3 meses"
+    ? "Comparativo diário consolidando Janeiro, Fevereiro e Março."
+    : `Comparativo diário dos canais em ${state.general.period}.`;
+
+  const summaryCards = [
+    { label: "Período selecionado", value: periodLabel, sub: `${rows.length} dias com dados` },
+    { label: "Total de tráfego", value: formatNumber(overall.trafego), sub: "Soma dos canais selecionados no período" },
+    { label: "Total de leads", value: formatNumber(overall.leads), sub: "Soma dos canais selecionados no período" },
+    { label: "Tx de conversão total", value: overall.taxa == null ? "sem dado" : formatMetricValue("taxa", overall.taxa), sub: "Leads totais ÷ tráfego total" }
+  ];
+  renderSummaryCards(els.general.summary, summaryCards);
+  renderChannelCards(els.general.channelSummary, rows, selectedChannels);
+
+  const series = selectedChannels.map(channel => {
+    const points = rows.map((d, index) => {
+      const value = d.channels[channel]?.[state.general.metric];
+      return {
+        index,
+        key: d.sortKey,
+        label: d.dataLabel,
+        periodo: d.periodo,
+        y: value == null ? null : Number(value)
+      };
+    }).filter(p => p.y != null && !Number.isNaN(p.y));
+    return { channel, label: channel, color: channelColor(channel), points };
+  }).filter(s => s.points.length);
+
+  const unavailable = selectedChannels.filter(ch => !series.some(s => s.channel === ch));
+  const notes = [];
+  if (!selectedChannels.length) notes.push("Nenhum canal selecionado.");
+  if (unavailable.length) notes.push(`Sem dados para <strong>${unavailable.join(", ")}</strong> na métrica <strong>${metricLabel(state.general.metric)}</strong>.`);
+  if (state.general.metric !== "leads" && selectedChannels.includes("No Value")) notes.push("O canal <strong>No Value</strong> tem apenas <strong>Leads</strong> nos arquivos recebidos.");
+  if (!enabledFlags.length) notes.push("Todas as flags estão ocultas.");
+  if (notes.length) setStatus(els.general.statusNote, notes.join(" "), unavailable.length ? "warn" : "info");
+  else setStatus(els.general.statusNote, "Visualização pronta. Agora o painel também mostra os <strong>totais do período</strong> e os <strong>totais por canal</strong>.", "info");
+
+  renderLegend(els.general.legend, channels.map(ch => ({
+    label: ch.label,
+    color: ch.color,
+    active: state.general.channels.has(ch.key),
+    onToggle: () => {
+      if (state.general.channels.has(ch.key)) state.general.channels.delete(ch.key);
+      else state.general.channels.add(ch.key);
+      refreshGeneral();
+    }
+  })));
+
+  const segmentBreaks = state.general.period === "3 meses"
+    ? (() => {
+        const starts = [];
+        rows.forEach((d, i) => { if (i === 0 || d.periodo !== rows[i-1].periodo) starts.push(i); });
+        return starts.map((idx, pos) => {
+          const nextIdx = starts[pos + 1] ?? rows.length;
+          return { index: idx, start: idx, end: nextIdx - 1, label: rows[idx].periodo };
+        });
+      })()
+    : null;
+
+  renderLineChart({
+    svg: els.general.chartSvg,
+    tooltip: els.general.tooltip,
+    empty: els.general.emptyState,
+    metric: state.general.metric,
+    xLabels: rows.map(d => ({ key:d.sortKey, label:d.dataLabel })),
+    series,
+    annotations: enabledFlags,
+    segmentBreaks,
+    tooltipFormatter: (p, s) => `<strong>${s.label}</strong><br>${p.label} - ${p.periodo}<br>${metricLabel(state.general.metric)}: <strong>${formatMetricValue(state.general.metric, p.y)}</strong>`
+  });
+}
+function migrationRows() {
+  return rangeData(migrationWindow.fullStart, migrationWindow.fullEnd);
+}
+function refreshMigration() {
+  syncControls();
+  const rows = migrationRows();
+  const preRows = rangeData(migrationWindow.preStart, migrationWindow.preEnd);
+  const postRows = rangeData(migrationWindow.postStart, migrationWindow.postEnd);
+  const selectedChannels = channels.filter(c => state.migration.channels.has(c.key)).map(c => c.key);
+
+  const fullAgg = aggregateForRows(rows, selectedChannels);
+  const preAgg = aggregateForRows(preRows, selectedChannels);
+  const postAgg = aggregateForRows(postRows, selectedChannels);
+
+  renderSummaryCards(els.migration.summary, [
+    { label: "Período total de análise", value: "01/02 a 15/03", sub: `${rows.length} dias analisados` },
+    { label: "22 dias pré-migração", value: formatMetricValue(state.migration.metric, state.migration.metric === "taxa" ? preAgg.taxa : preAgg[state.migration.metric]), sub: `Tráfego: ${formatNumber(preAgg.trafego)} | Leads: ${formatNumber(preAgg.leads)} | Tx: ${preAgg.taxa == null ? "sem dado" : formatMetricValue("taxa", preAgg.taxa)}` },
+    { label: "22 dias pós-migração", value: formatMetricValue(state.migration.metric, state.migration.metric === "taxa" ? postAgg.taxa : postAgg[state.migration.metric]), sub: `Tráfego: ${formatNumber(postAgg.trafego)} | Leads: ${formatNumber(postAgg.leads)} | Tx: ${postAgg.taxa == null ? "sem dado" : formatMetricValue("taxa", postAgg.taxa)}` },
+    { label: "Período completo", value: formatMetricValue(state.migration.metric, state.migration.metric === "taxa" ? fullAgg.taxa : fullAgg[state.migration.metric]), sub: `Tráfego: ${formatNumber(fullAgg.trafego)} | Leads: ${formatNumber(fullAgg.leads)} | Tx: ${fullAgg.taxa == null ? "sem dado" : formatMetricValue("taxa", fullAgg.taxa)}` }
+  ]);
+
+  const seriesTimeline = selectedChannels.map(channel => {
+    const points = rows.map((d, index) => {
+      const value = d.channels[channel]?.[state.migration.metric];
+      return { index, key:d.sortKey, label:d.dataLabel, periodo:d.periodo, y: value == null ? null : Number(value) };
+    }).filter(p => p.y != null && !Number.isNaN(p.y));
+    return { channel, label: channel, color: channelColor(channel), points };
+  }).filter(s => s.points.length);
+
+  renderLegend(els.migration.legend, channels.map(ch => ({
+    label: ch.label,
+    color: ch.color,
+    active: state.migration.channels.has(ch.key),
+    onToggle: () => {
+      if (state.migration.channels.has(ch.key)) state.migration.channels.delete(ch.key);
+      else state.migration.channels.add(ch.key);
+      refreshMigration();
+    }
+  })));
+
+  renderLineChart({
+    svg: els.migration.timelineSvg,
+    tooltip: els.migration.timelineTooltip,
+    empty: els.migration.timelineEmpty,
+    metric: state.migration.metric,
+    xLabels: rows.map(d => ({ key:d.sortKey, label:d.dataLabel })),
+    series: seriesTimeline,
+    annotations: [{ key:"migracao", type:"line", dateKey:migrationDate, label:"Migração do Blog", color:"#7c3aed", fill:"#f5f3ff", text:"#6d28d9" }],
+    segmentBreaks: [
+      { index:0, start:0, end:preRows.length - 1, label:"Pré-migração" },
+      { index:preRows.length, start:preRows.length, end:rows.length - 1, label:"Pós-migração" }
+    ],
+    tooltipFormatter: (p, s) => `<strong>${s.label}</strong><br>${p.label} - ${p.periodo}<br>${metricLabel(state.migration.metric)}: <strong>${formatMetricValue(state.migration.metric, p.y)}</strong>`
+  });
+
+  const overlaySeries = [];
+  selectedChannels.forEach(channel => {
+    const prePoints = preRows.map((d, index) => {
+      const value = d.channels[channel]?.[state.migration.metric];
+      return { index, key:d.sortKey, label:`D${index + 1}`, actual:d.dataLabel, bucket:"Pré-migração", y:value == null ? null : Number(value) };
+    }).filter(p => p.y != null && !Number.isNaN(p.y));
+    const postPoints = postRows.map((d, index) => {
+      const value = d.channels[channel]?.[state.migration.metric];
+      return { index, key:d.sortKey, label:`D${index + 1}`, actual:d.dataLabel, bucket:"Pós-migração", y:value == null ? null : Number(value) };
+    }).filter(p => p.y != null && !Number.isNaN(p.y));
+    if (prePoints.length) overlaySeries.push({ label:`${channel} · Pré`, color:channelColor(channel), dashed:true, points:prePoints });
+    if (postPoints.length) overlaySeries.push({ label:`${channel} · Pós`, color:channelColor(channel), dashed:false, points:postPoints });
+  });
+
+  renderLegend(els.migration.overlayLegend, overlaySeries.map(s => ({
+    label: s.label,
+    color: s.color,
+    dashed: s.dashed
+  })));
+
+  renderLineChart({
+    svg: els.migration.overlaySvg,
+    tooltip: els.migration.overlayTooltip,
+    empty: els.migration.overlayEmpty,
+    metric: state.migration.metric,
+    xLabels: Array.from({length: Math.max(preRows.length, postRows.length)}, (_, i) => ({ key:String(i+1), label:`D${i+1}` })),
+    series: overlaySeries,
+    annotations: [],
+    topBand: 50,
+    tooltipFormatter: (p, s) => `<strong>${s.label}</strong><br>${p.label} (${p.actual})<br>${metricLabel(state.migration.metric)}: <strong>${formatMetricValue(state.migration.metric, p.y)}</strong>`
+  });
+
+  const notes = [];
+  if (!selectedChannels.length) notes.push("Nenhum canal selecionado.");
+  if (state.migration.metric !== "leads" && selectedChannels.includes("No Value")) notes.push("O canal <strong>No Value</strong> tem apenas <strong>Leads</strong> nos arquivos recebidos.");
+  if (notes.length) setStatus(els.migration.statusNote, notes.join(" "), "warn");
+  else setStatus(els.migration.statusNote, `Análise da migração pronta. Os cartões acima trazem o total do período completo e o recorte <strong>22 dias antes x 22 dias depois</strong> da migração em <strong>22/02</strong>.`, "info");
+}
 
 buildControls();
-refresh();
+refreshGeneral();
+refreshMigration();
 </script>
 </body>
 </html>
